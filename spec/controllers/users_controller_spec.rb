@@ -53,11 +53,11 @@ describe UsersController do
     
     context "if the create succeeds" do
       it "creates a new User" do
-        post :create, user: FactoryGirl.attributes_for( :user )
+        post :create, user: FactoryGirl.attributes_for( :user, email: "smanspiff@example.com" )
         expect( User ).to have_received( :new ).
           with( { "first_name" => "Spaceman",
                   "last_name" => "Spiff",
-                  "email" => "smanspiff4@example.com",
+                  "email" => "smanspiff@example.com",
                   "password" => "password",
                   "password_confirmation" => "password"} )
       end

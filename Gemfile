@@ -46,4 +46,5 @@ group :development, :test do
   gem 'rspec-activemodel-mocks'
   gem 'byebug', group: [:development, :test]
   gem 'factory_girl_rails'
+  gem 'database_cleaner'
 end

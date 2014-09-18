@@ -43,6 +43,7 @@ gem 'bcrypt-ruby', '~> 3.0.0'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
+  gem 'rspec-activemodel-mocks'
   gem 'byebug', group: [:development, :test]
   gem 'factory_girl_rails'
 end

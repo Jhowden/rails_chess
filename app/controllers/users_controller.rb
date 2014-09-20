@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_filter :find_user, except: [:new, :create, :index]
+  
   def index
     @users = User.all
   end
@@ -49,6 +50,6 @@ class UsersController < ApplicationController
                                     :last_name, 
                                     :email,
                                     :password,
-                                    :password_confirmation)
+                                    :password_confirmation )
   end
 end

@@ -1,10 +1,10 @@
 class UsersController < ApplicationController
+  before_filter :find_user, except: [:new, :create, :index]
   def index
     @users = User.all
   end
   
   def show
-    @user = User.find( params[:id] )
   end
   
   def new
@@ -20,9 +20,31 @@ class UsersController < ApplicationController
     end
   end
   
+  def edit
+  end
+  
+  def update
+    if @user.update_attributes( user_params )
+      redirect_to edit_user_path( @user )
+    else
+      render :edit
+    end
+  end
+  
+  def destroy
+    @user.destroy
+    redirect_to users_path
+  end
+  
+  protected
+  
+  def find_user()
+    @user = User.find params[:id]
+  end
+  
   private
   
-  def user_params
+  def user_params()
     params.require( :user ).permit( :first_name, 
                                     :last_name, 
                                     :email,

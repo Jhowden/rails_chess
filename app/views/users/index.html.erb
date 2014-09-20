@@ -1,1 +1,24 @@
 <h1>Please login or register to play a game</h1>
+
+<%= link_to "Register", new_user_path %>
+
+<h3>Listing User's</h3>
+<% unless @users.count == 0 %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th></th>
+    </tr>
+    
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.fullname %></td>
+        <td><%= user.email %></td>
+        <td><%= link_to "Show", user %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<%= link_to "Home", "/" %>

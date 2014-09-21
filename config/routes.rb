@@ -7,6 +7,10 @@ MultiplayerChess::Application.routes.draw do
   
   resources :users
 
+  get "login" => "sessions#login", as: :login
+  post "login_user" => "sessions#login_user", as: :login_user
+  post "logout" => "sessions#logout", as: :logout
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

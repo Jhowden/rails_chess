@@ -37,6 +37,11 @@ describe SessionsController do
       post :login_user, @params
       expect( session[:user_id] ).to eq( user.id )
     end
+    
+    it "sets a flash message" do
+      post :login_user, @params
+      expect( flash.notice ).to match /Successfully logged/
+    end
 
     context "when a user fails to login" do
       before :each do
@@ -46,6 +51,11 @@ describe SessionsController do
       it "renders the login page" do
         post :login_user, @params
         expect( response ).to render_template( "sessions/login" )
+      end
+      
+      it "sets a flash message" do
+        post :login_user, @params
+        expect( flash[:error] ).to match /Invalid/
       end
     end
 

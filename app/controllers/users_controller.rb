@@ -15,8 +15,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new user_params
     if @user.save
+      flash.notice = "User successfully created"
       redirect_to @user
     else
+      flash.now[:error] = "Could not register user"
       render :new
     end
   end

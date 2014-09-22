@@ -75,6 +75,11 @@ describe UsersController do
         post :create, user: FactoryGirl.attributes_for( :user )
         expect( response ).to redirect_to user
       end
+      
+      it "sets a flash message" do
+        post :create, user: FactoryGirl.attributes_for( :user )
+        expect( flash.notice ).to match( /User successfully/ )
+      end
     end
     
     context "if the create fails" do
@@ -85,6 +90,11 @@ describe UsersController do
       it "returns you to the 'new' page" do
         post :create, user: { first_name: nil }
         expect( response ).to render_template( "users/new" )
+      end
+      
+      it "sets a flash message" do
+        post :create, user: { first_name: nil }
+        expect( flash[:error] ).to match( /Could not/ )
       end
     end
   end

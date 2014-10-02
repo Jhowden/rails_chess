@@ -18,14 +18,11 @@ describe UsersController do
   describe "GET #show" do
     before :each do
       allow( User ).to receive( :find ).and_return user
+      allow( user ).to receive( :invitations )
+      session[:user_id] = user.id
     end
     
-    it "assigns the requested user to @user" do
-      get :show, id: user
-      expect( assigns( :user ) ).to eq user
-    end
-    
-    it "renders the :index view" do
+    it "renders the :show view" do
       get :show, id: user
       expect( response ).to render_template :show
     end
@@ -34,68 +31,17 @@ describe UsersController do
       get :show, id: user
       expect( User ).to have_received( :find ).with( user.id.to_s )
     end
-  end
-  
-  describe "GET #new" do
-    before( :each ) do
-      allow( User ).to receive( :new )
-    end
     
-    it "instantiates a new User" do
-      get :new
-      expect( User ).to have_received( :new )
-    end
-    
-    it "renders the :new view" do
-      get :new
-      expect( response ).to render_template :new
-    end
-  end
-
-  describe "POST #create" do
-    let( :user ) { stub_model User }
-    
-    before :each do
-      allow( User ).to receive( :new ).and_return user
-      allow( user ).to receive( :save ).and_return true
-    end
-    
-    context "if the create succeeds" do
-      it "creates a new User" do
-        post :create, user: FactoryGirl.attributes_for( :user, email: "smanspiff@example.com" )
-        expect( User ).to have_received( :new ).
-          with( { "first_name" => "Spaceman",
-                  "last_name" => "Spiff",
-                  "email" => "smanspiff@example.com",
-                  "password" => "password",
-                  "password_confirmation" => "password"} )
-      end
+    it "looks up the games the User is in" do
+      allow( user ).to receive( :invitations )
       
-      it do
-        post :create, user: FactoryGirl.attributes_for( :user )
-        expect( response ).to redirect_to user
-      end
+      get :show, id: user
       
-      it "sets a flash message" do
-        post :create, user: FactoryGirl.attributes_for( :user )
-        expect( flash.notice ).to match( /User successfully/ )
-      end
+      expect( user ).to have_received( :invitations )
     end
     
-    context "if the create fails" do
-      before :each do
-        allow( user ).to receive( :save ).and_return false
-      end
-      
-      it "returns you to the 'new' page" do
-        post :create, user: { first_name: nil }
-        expect( response ).to render_template( "users/new" )
-      end
-      
-      it "sets a flash message" do
-        post :create, user: { first_name: nil }
-        expect( flash[:error] ).to match( /Could not/ )
-      end
+    after :each do
+      session.clear
     end
   end
   

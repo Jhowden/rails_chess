@@ -8,7 +8,9 @@ MultiplayerChess::Application.routes.draw do
   resources :users
 
   get "login" => "sessions#login", as: :login
+  get "register" => "sessions#register", as: :register
   post "login_user" => "sessions#login_user", as: :login_user
+  post "register_user" => "sessions#register_user", as: :register_user
   post "logout" => "sessions#logout", as: :logout
 
   # Example of regular route:

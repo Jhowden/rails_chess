@@ -1,26 +1,12 @@
 class UsersController < ApplicationController
-  before_filter :find_user, except: [:new, :create, :index]
+  before_filter :find_user, except: [:index]
   
   def index
     @users = User.all
   end
   
   def show
-  end
-  
-  def new
-    @user = User.new
-  end
-  
-  def create
-    @user = User.new user_params
-    if @user.save
-      flash.notice = "User successfully created"
-      redirect_to @user
-    else
-      flash.now[:error] = "Could not register user"
-      render :new
-    end
+    @invitations = current_user.invitations
   end
   
   def edit

@@ -14,6 +14,22 @@ class SessionsController < ApplicationController
     end
   end
   
+  def register
+    @User = User.new
+  end
+  
+  def register_user
+    @User = User.new registration_params
+    if @User.save
+      session[:user_id] = @User.id
+      flash.notice = "User successfully created"
+      redirect_to @User
+    else
+      flash.now[:error] = "Could not register user"
+      render :register
+    end
+  end
+  
   def logout
     session.clear
     redirect_to :root
@@ -23,5 +39,13 @@ class SessionsController < ApplicationController
   
   def login_params()
     params.require( :login ).permit( :email, :password )
+  end
+  
+  def registration_params()
+    params.require( :user ).permit( :first_name, 
+                                    :last_name, 
+                                    :email,
+                                    :password,
+                                    :password_confirmation )
   end
 end

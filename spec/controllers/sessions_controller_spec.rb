@@ -81,6 +81,10 @@ describe SessionsController do
         expect( response ).to render_template "login"
       end
     end
+    
+    after :each do
+      session.clear
+    end
   end
   
   describe "GET #register" do

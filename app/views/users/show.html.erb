@@ -1,3 +1,21 @@
+
+<h1>List of Game Invitations</h1>
+<% unless @invitations.count == 0 %>
+  <table>
+    <tr>
+      <th>Sender</th>
+      <th>Receiver</th>
+      <th>Game Link</th>
+    </tr>
+    <% @invitations.each do |invite| %>
+      <tr>
+        <td><%= invite.sender.fullname %></td>
+        <td><%= invite.receiver.fullname %></td>
+        <td><%= invite.game_link %></td>
+      </tr>
+  </table>
+    <% end %>
+<% end %>
 <%= link_to "Edit", edit_user_path( @user ) %>
 <%= link_to "Delete Account", user_path( @user ), method: :delete %>
 <%= link_to "Back", users_path %>

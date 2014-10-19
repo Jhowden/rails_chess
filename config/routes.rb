@@ -12,6 +12,10 @@ MultiplayerChess::Application.routes.draw do
   post "login_user" => "sessions#login_user", as: :login_user
   post "register_user" => "sessions#register_user", as: :register_user
   post "logout" => "sessions#logout", as: :logout
+  
+  post "send_invite/:receiver_id" => "invitations#send_invite", as: :send_invite
+  
+  get "game/:game_id/home" => "games#index", as: :game_home
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

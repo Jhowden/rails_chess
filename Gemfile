@@ -47,4 +47,8 @@ group :development, :test do
   gem 'byebug', group: [:development, :test]
   gem 'factory_girl_rails'
   gem 'database_cleaner'
+  gem 'guard'
+  gem "guard-bundler", require: false
+  gem "guard-rspec", require: false
+  gem "guard-shell", require: false
 end

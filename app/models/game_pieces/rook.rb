@@ -2,7 +2,7 @@ class GamePieces::Rook < GamePieces::ChessPiece
 
   attr_reader :board_marker
 
-  def initialize( file, rank, team, board )
+  def initialize( details )
     super
     @board_marker = determine_board_marker
   end

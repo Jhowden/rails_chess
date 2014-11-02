@@ -3,8 +3,8 @@ require "rails_helper"
 describe GamePieces::Bishop do
 
   let(:board) { double( chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let(:bishop) { described_class.new( "e", 4, :black, board ) }
-  let(:bishop2) { described_class.new( "e", 4, :white, board ) }
+  let(:bishop) { described_class.new( {file: "e", rank: 4, team: :black, board: board} ) }
+  let(:bishop2) { described_class.new( {file: "e", rank: 4, team: :white, board: board} ) }
 
   describe "#determine_possible_moves" do
     it "returns all possible moves" do

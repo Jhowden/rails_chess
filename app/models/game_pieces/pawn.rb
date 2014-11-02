@@ -4,12 +4,12 @@ class GamePieces::Pawn < GamePieces::ChessPiece
   
   attr_reader :orientation, :board_marker, :starting_location, :en_passant, :capture_through_en_passant
   
-  def initialize( file, rank, team, board, orientation, en_passant )
-    super( file, rank, team, board )
-    @orientation = orientation
-    @en_passant = en_passant
+  def initialize( details ) #en_passant needs to be a module
+    super( details )
+    @orientation = details[:orientation]
+    @en_passant = details[:en_passant]
     @board_marker = determine_board_marker
-    @capture_through_en_passant = true
+    @capture_through_en_passant = details[:capture_through_en_passant]
   end
   
   def determine_possible_moves

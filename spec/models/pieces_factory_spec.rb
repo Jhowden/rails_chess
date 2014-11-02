@@ -2,10 +2,9 @@ require "rails_helper"
 
 describe PiecesFactory do
 
-  let(:board) { double() }
   let(:en_passant) { double() }
-  let(:white_pieces_factory) { described_class.new( board, :white, en_passant ) }
-  let(:black_pieces_factory) { described_class.new( board, :black, en_passant ) }
+  let(:white_pieces_factory) { described_class.new( :white, en_passant ) }
+  let(:black_pieces_factory) { described_class.new( :black, en_passant ) }
 
   describe "#build" do
     it "creates the 16 pieces" do
@@ -38,15 +37,15 @@ describe PiecesFactory do
       end
 
       it "creates a pawn with the correct board" do
-        expect( @pawn_collection.all?{ |pawn| pawn.board == board} ).to be_truthy
+        expect( @pawn_collection.all?{ |pawn| pawn.board.nil? } ).to be_truthy
       end
 
       it "creates a pawn with the correct orientation" do
-        expect( @pawn_collection.all?{ |pawn| pawn.orientation == :down} ).to be_truthy
+        expect( @pawn_collection.all?{ |pawn| pawn.orientation == :down } ).to be_truthy
       end
 
       it "creates a pawn with an en_passant object" do
-        expect( @pawn_collection.all?{ |pawn| pawn.en_passant == en_passant} ).to be_truthy
+        expect( @pawn_collection.all?{ |pawn| pawn.en_passant == en_passant } ).to be_truthy
       end
     end
 
@@ -70,15 +69,15 @@ describe PiecesFactory do
       end
       
       it "creates a pawn with the correct board" do
-        expect( @pawn_collection.all?{ |pawn| pawn.board == board} ).to be_truthy
+        expect( @pawn_collection.all?{ |pawn| pawn.board.nil? } ).to be_truthy
       end
       
       it "creates a pawn with the correct orientation" do
-        expect( @pawn_collection.all?{ |pawn| pawn.orientation == :up} ).to be_truthy
+        expect( @pawn_collection.all?{ |pawn| pawn.orientation == :up } ).to be_truthy
       end
       
       it "creates a pawn with an en_passant object" do
-        expect( @pawn_collection.all?{ |pawn| pawn.en_passant == en_passant} ).to be_truthy
+        expect( @pawn_collection.all?{ |pawn| pawn.en_passant == en_passant } ).to be_truthy
       end
     end
     
@@ -110,7 +109,7 @@ describe PiecesFactory do
       end
 
       it "creates a rook with the correct board" do
-        expect( @rook_collection.all?{ |rook| rook.board == board} ).to be_truthy
+        expect( @rook_collection.all?{ |rook| rook.board.nil? } ).to be_truthy
       end
     end
 
@@ -142,7 +141,7 @@ describe PiecesFactory do
       end
 
       it "creates a rook with the correct board" do
-        expect( @rook_collection.all?{ |rook| rook.board == board} ).to be_truthy
+        expect( @rook_collection.all?{ |rook| rook.board.nil? } ).to be_truthy
       end
     end
   end
@@ -175,7 +174,7 @@ describe PiecesFactory do
     end
 
     it "creates a bishop with the correct board" do
-      expect( @bishop_collection.all?{ |rook| rook.board == board} ).to be_truthy
+      expect( @bishop_collection.all?{ |rook| rook.board.nil? } ).to be_truthy
     end
   end
 
@@ -207,7 +206,7 @@ describe PiecesFactory do
     end
 
     it "creates a bishop with the correct board" do
-      expect( @bishop_collection.all?{ |rook| rook.board == board} ).to be_truthy
+      expect( @bishop_collection.all?{ |rook| rook.board.nil? } ).to be_truthy
     end
   end
 
@@ -239,7 +238,7 @@ describe PiecesFactory do
     end
 
     it "creates a knight with the correct board" do
-      expect( @knight_collection.all?{ |rook| rook.board == board} ).to be_truthy
+      expect( @knight_collection.all?{ |rook| rook.board.nil? } ).to be_truthy
     end
   end
 
@@ -271,7 +270,7 @@ describe PiecesFactory do
     end
 
     it "creates a knight with the correct board" do
-      expect( @knight_collection.all?{ |rook| rook.board == board} ).to be_truthy
+      expect( @knight_collection.all?{ |rook| rook.board.nil? } ).to be_truthy
     end
   end
 
@@ -303,7 +302,7 @@ describe PiecesFactory do
     end
 
     it "creates a queen with the correct board" do
-      expect( @queen.board ).to eq( board )
+      expect( @queen.board ).to be_nil
     end
   end
 #
@@ -335,7 +334,7 @@ describe PiecesFactory do
     end
 
     it "creates a queen with the correct board" do
-      expect( @queen.board ).to eq( board )
+      expect( @queen.board ).to be_nil
     end
   end
 
@@ -367,7 +366,7 @@ describe PiecesFactory do
     end
 
     it "creates a king with the correct board" do
-      expect( @king.board ).to eq( board )
+      expect( @king.board ).to be_nil
     end
   end
 
@@ -399,7 +398,7 @@ describe PiecesFactory do
       end
 
       it "creates a king with the correct board" do
-        expect( @king.board ).to eq( board )
+        expect( @king.board ).to be_nil
       end
     end
 end

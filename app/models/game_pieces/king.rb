@@ -4,9 +4,9 @@ class GamePieces::King < GamePieces::ChessPiece
 
   KING_SPACE_MODIFIERS = [[-1, 0], [-1, -1], [0, -1], [1, -1], [1, 0], [1,1], [0,1], [-1, 1]]
   
-  def initialize( file, rank, team, board )
+  def initialize( details )
     super
-    @checkmate = false
+    @checkmate = details[:checkmate]
     @board_marker = determine_board_marker
   end
 

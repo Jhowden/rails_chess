@@ -3,8 +3,10 @@ require "rails_helper"
 describe GamePieces::Pawn do
 
   let(:board) { double( chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let(:pawn) { described_class.new( "b", 2, :black, board, :up, enpassant ) }
-  let(:pawn2) { described_class.new( "b", 1, :white, board, :down, enpassant ) }
+  let(:pawn) { described_class.new( { file: "b", rank: 2, team: :black, board: board, 
+    orientation: :up, en_passant: enpassant, capture_through_en_passant: true } ) }
+  let(:pawn2) { described_class.new( { file: "b", rank: 1, team: :white, board: board, 
+    orientation: :down, en_passant: enpassant, capture_through_en_passant: true } ) }
   let(:enpassant) { double() }
   
   before :each do

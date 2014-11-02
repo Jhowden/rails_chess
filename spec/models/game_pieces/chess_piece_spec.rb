@@ -2,9 +2,35 @@ require 'rails_helper'
 
 describe GamePieces::ChessPiece do
   
-  let(:board) { double() }
-  let(:piece) { described_class.new( "a", 0, :white, board ) }
-
+  let( :piece ) { described_class.new( {file: "a", rank: 0, team: :white} ) }
+  let( :board ) { double( "board" ) }
+  
+  context "when passed no board" do
+    it "initializes with no board" do
+      expect( piece.board ).to be_nil
+    end
+  end
+  
+  context "when passed a board" do
+    it "uses the new board" do
+      piece = described_class.new( {file: "a", rank: 0, team: :white, board: board} )
+      expect( piece.board ).to eq board
+    end
+  end
+  
+  context "when passed no move_counter" do
+    it "initializes with a move_counter of 0" do
+      expect( piece.move_counter ).to eq 0
+    end
+  end
+  
+  context "when passed a move_counter" do
+    it "initializes with a move_counter of 0" do
+      piece = described_class.new( {file: "a", rank: 0, team: :white, move_counter: 4} )
+      expect( piece.move_counter ).to eq 4
+    end
+  end
+  
   describe "#captured?" do
     it "returns the status of a piece" do
       expect( piece.captured? ).to be_falsey

@@ -4,7 +4,7 @@ class GamePieces::Knight < GamePieces::ChessPiece
 
   KNIGHT_SPACE_MODIFIERS = [[-1, -2], [-2, -1], [1, -2], [2, -1], [-1, 2], [-2, 1], [1, 2], [2, 1]]
 
-  def initialize( file, rank, team, board )
+  def initialize( details )
     super
     @board_marker = determine_board_marker
   end

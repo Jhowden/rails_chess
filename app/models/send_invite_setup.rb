@@ -36,13 +36,14 @@ class SendInviteSetup
     end
   end
   
-  def create_game( board = Board.new )
-    board.create_board
+  def create_game( board_dimension = Array.new( 8 ) { |cell| Array.new( 8 ) } )
+    board = Board.new( board_dimension ).place_pieces_on_board
+    json_board = BoardJsonifier.jsonify_board board
     Game.new( 
       white_team_id: player.id, 
       black_team_id: params["receiver_id"].to_i,
       player_turn: player.id,
-      board: board )
+      board: json_board )
   end
   
   def create_invitation( game_id )

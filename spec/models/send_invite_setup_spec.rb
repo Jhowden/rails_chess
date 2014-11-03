@@ -4,16 +4,12 @@ describe SendInviteSetup do
   let( :game ) { stub_model Game }
   let( :invite ) { stub_model Invitation }
   let( :params ) { {"receiver_id" => 2} }
-  let( :board ) { stub_const( "Board", Class.new ) }
   let( :created_board ) { double() }
   let( :player ) { double( "player", id: 1 ) }
   let( :controller ) { double( "controller" ) }
   let( :send_invite_setup ) { described_class.new( controller, params, player ) }
   
-  before :each do
-    allow( board ).to receive( :new ).and_return board
-    allow( board ).to receive( :create_board )
-    
+  before :each do    
     allow( Game ).to receive( :new ).and_return game
     allow( game ).to receive( :save! ).and_return true
     allow( invite ).to receive( :create_game_link )
@@ -22,22 +18,41 @@ describe SendInviteSetup do
     allow( invite ).to receive( :save! ).and_return true
     
     allow( controller ).to receive( :invitation_successfully_created )
+    
+    stub_const( "BoardJsonifier", Class.new )
+    allow( BoardJsonifier ).to receive( :jsonify_board ).and_return "[]"
+
+    stub_const( "Board", Class.new )
+    allow( Board ).to receive( :new ).and_return Board
+    allow( Board ).to receive( :place_pieces_on_board ).and_return []
   end
   
   describe "#call" do
-    it "creates the board for a Board" do
+    it "instantiates a new Board" do
       send_invite_setup.call
       
-      expect( board ).to have_received( :create_board )
+      expect( Board ).to have_received( :new ).with( Array.new( 8 ) { |cell| Array.new( 8 ) } )
     end
     
+    it "builds up the board" do
+      send_invite_setup.call
+      
+      expect( Board ).to have_received( :place_pieces_on_board )
+    end
+    
+    it "jsonfies the board" do
+      send_invite_setup.call
+      
+      expect( BoardJsonifier ).to have_received( :jsonify_board ).with( [] )
+    end
+       
     it "instantiates a new Game" do
       send_invite_setup.call
       
       expect( Game ).to have_received( :new ).with( 
         white_team_id: 1,
         black_team_id: 2,
-        board: board,
+        board: "[]",
         player_turn: 1 )
     end
     

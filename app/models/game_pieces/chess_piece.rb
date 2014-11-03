@@ -2,7 +2,7 @@ class GamePieces::ChessPiece
   
   attr_reader :captured, :position, :board, :team, :possible_moves, :move_counter
   
-  def initialize( details, options = {board: nil, move_counter: 0} )
+  def initialize( details, options = {:board => nil, :move_counter => 0} )
     new_options = options.merge details
     @position = Position.new( new_options[:file], new_options[:rank] )
     @board = new_options[:board]

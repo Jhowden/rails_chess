@@ -3,6 +3,5 @@ class Game < ActiveRecord::Base
   belongs_to :black_team, class_name: "User"
   has_one :invitation
 
-  serialize :board
   validates_presence_of :board, :white_team_id, :black_team_id, :player_turn
 end

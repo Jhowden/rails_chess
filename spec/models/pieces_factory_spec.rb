@@ -1,10 +1,8 @@
 require "rails_helper"
 
 describe PiecesFactory do
-
-  let(:en_passant) { double() }
-  let(:white_pieces_factory) { described_class.new( :white, en_passant ) }
-  let(:black_pieces_factory) { described_class.new( :black, en_passant ) }
+  let(:white_pieces_factory) { described_class.new( :white ) }
+  let(:black_pieces_factory) { described_class.new( :black ) }
 
   describe "#build" do
     it "creates the 16 pieces" do
@@ -43,10 +41,6 @@ describe PiecesFactory do
       it "creates a pawn with the correct orientation" do
         expect( @pawn_collection.all?{ |pawn| pawn.orientation == :down } ).to be_truthy
       end
-
-      it "creates a pawn with an en_passant object" do
-        expect( @pawn_collection.all?{ |pawn| pawn.en_passant == en_passant } ).to be_truthy
-      end
     end
 
     context "when black team" do
@@ -74,10 +68,6 @@ describe PiecesFactory do
       
       it "creates a pawn with the correct orientation" do
         expect( @pawn_collection.all?{ |pawn| pawn.orientation == :up } ).to be_truthy
-      end
-      
-      it "creates a pawn with an en_passant object" do
-        expect( @pawn_collection.all?{ |pawn| pawn.en_passant == en_passant } ).to be_truthy
       end
     end
     

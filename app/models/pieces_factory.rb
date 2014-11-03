@@ -5,9 +5,8 @@ class PiecesFactory
 
   attr_reader :pieces, :board, :team, :en_passant
 
-  def initialize( team, en_passant )
+  def initialize( team )
     @team = team
-    @en_passant = en_passant
     @pieces = []
   end
   
@@ -27,13 +26,11 @@ class PiecesFactory
       if team == :white
         pieces << GamePieces::Pawn.new( { file: Position::FILE_POSITIONS[file], 
           rank: 7, team: team, orientation: :down, 
-          captured: false, en_passant: en_passant,
-          capture_through_en_passant: true } )
+          captured: false, capture_through_en_passant: true } )
       else
         pieces << GamePieces::Pawn.new( {file: Position::FILE_POSITIONS[file], 
           rank: 2, team: team, orientation: :up, 
-          captured: false, en_passant: en_passant,
-          capture_through_en_passant: true } )
+          captured: false, capture_through_en_passant: true } )
       end
     end
   end

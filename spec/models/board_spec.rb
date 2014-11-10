@@ -16,8 +16,10 @@ describe Board do
   
   before :each do
     stub_const( "PiecesFactory", Class.new )
+    
     allow( PiecesFactory ).to receive( :new ).and_return PiecesFactory
-    allow( PiecesFactory ).to receive( :build ).and_return pieces
+    allow( PiecesFactory ).to receive( :build ).and_return PiecesFactory
+    allow( PiecesFactory ).to receive( :pieces ).and_return pieces
   end
   
   describe "#update_board" do

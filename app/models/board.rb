@@ -29,10 +29,21 @@ class Board
     end
   end
   
+  def find_piece_on_board( piece_position )
+    piece = find_piece( piece_position )
+    piece || NullObject::NullPiece.new
+  end
+  
   private 
   
   def capture_piece( file, rank )
     chess_board[rank][file].captured! unless chess_board[rank][file].nil?
+  end
+  
+  def find_piece( position )
+    file = position.file_position_converter
+    rank = position.rank_position_converter
+    chess_board[rank][file]
   end
   
   # def remove_old_position( piece_position )
@@ -99,13 +110,6 @@ class Board
   # def convert_to_rank_position( index )
   #   ( index - 8 ).abs
   # end
-  #
-  # def find_piece( position )
-  #   file = position.file_position_converter
-  #   rank = position.rank_position_converter
-  #   chess_board[rank][file]
-  # end
-  #
   #
   # private
   #

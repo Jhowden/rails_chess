@@ -16,10 +16,12 @@ describe Board do
   
   before :each do
     stub_const( "PiecesFactory", Class.new )
-    
     allow( PiecesFactory ).to receive( :new ).and_return PiecesFactory
     allow( PiecesFactory ).to receive( :build ).and_return PiecesFactory
     allow( PiecesFactory ).to receive( :pieces ).and_return pieces
+    
+    stub_const( "NullObject::NullPiece", Class.new )
+    allow( NullObject::NullPiece ).to receive( :new )
   end
   
   describe "#update_board" do
@@ -67,6 +69,22 @@ describe Board do
       expect( board.chess_board[7][1] ).to be_an_instance_of GamePieces::Bishop
       expect( board.chess_board[6][1] ).to be_an_instance_of GamePieces::Pawn
       expect( board.chess_board[1][0] ).to be_an_instance_of GamePieces::King
+    end
+  end
+  
+  describe "#find_piece_on_board" do
+    context "when a piece is found" do
+      it "finds the piece on the board" do
+        board.chess_board[3][5] = piece
+        expect( board.find_piece_on_board( piece.position ) ).to eq piece
+      end
+    end
+
+    context "when not finding a piece" do
+      it "returns a NullPiece object" do
+        board.find_piece_on_board( piece.position )
+        expect( NullObject::NullPiece ).to have_received( :new )
+      end
     end
   end
 end

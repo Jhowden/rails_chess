@@ -1,13 +1,16 @@
+require "en_passant_commands"
+
 class GamePieces::Pawn < GamePieces::ChessPiece
+  include EnPassantCommands
+  
   STRAIGHT_ONE_MOVE_MODIFIER = [-1, 1]
   STRAIGHT_TWO_MOVE_MODIFIER = [-2, 2]
   
   attr_reader :orientation, :board_marker, :starting_location, :en_passant, :capture_through_en_passant
   
-  def initialize( details ) #en_passant needs to be a module, not a class
+  def initialize( details )
     super( details )
     @orientation = details[:orientation]
-    @en_passant = details[:en_passant]
     @capture_through_en_passant = details[:capture_through_en_passant]
     @board_marker = determine_board_marker
   end
@@ -19,8 +22,8 @@ class GamePieces::Pawn < GamePieces::ChessPiece
     possible_moves << piece_move_forward_two_spaces( STRAIGHT_TWO_MOVE_MODIFIER )
     possible_moves << piece_move_forward_diagonally( :left )
     possible_moves << piece_move_forward_diagonally( :right )
-    possible_moves << en_passant.capture_pawn_en_passant!( self, :previous ) if en_passant.can_en_passant?( self, :previous )
-    possible_moves << en_passant.capture_pawn_en_passant!( self, :next ) if en_passant.can_en_passant?( self, :next )
+    possible_moves << EnPassantCommands.capture_pawn_en_passant!( self, :previous ) if EnPassantCommands.can_en_passant?( self, :previous )
+    possible_moves << EnPassantCommands.capture_pawn_en_passant!( self, :next ) if EnPassantCommands.can_en_passant?( self, :next )
     
     possible_moves.compact!
   end

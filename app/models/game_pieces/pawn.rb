@@ -1,10 +1,10 @@
 require "en_passant_commands"
+require "file_checker_factory"
+require "pawn_forward_one/pawn_forward_one_factory"
+require "pawn_forward_two/pawn_forward_two_factory"
 
 class GamePieces::Pawn < GamePieces::ChessPiece
   include EnPassantCommands
-  
-  STRAIGHT_ONE_MOVE_MODIFIER = [-1, 1]
-  STRAIGHT_TWO_MOVE_MODIFIER = [-2, 2]
   
   attr_reader :orientation, :board_marker, :starting_location, :en_passant, :capture_through_en_passant
   
@@ -18,8 +18,8 @@ class GamePieces::Pawn < GamePieces::ChessPiece
   def determine_possible_moves
     clear_moves!
     
-    possible_moves << piece_move_forward_one_space( STRAIGHT_ONE_MOVE_MODIFIER )
-    possible_moves << piece_move_forward_two_spaces( STRAIGHT_TWO_MOVE_MODIFIER )
+    possible_moves << piece_move_forward_one_space
+    possible_moves << piece_move_forward_two_spaces
     possible_moves << piece_move_forward_diagonally( :left )
     possible_moves << piece_move_forward_diagonally( :right )
     possible_moves << EnPassantCommands.capture_pawn_en_passant!( self, :previous ) if EnPassantCommands.can_en_passant?( self, :previous )
@@ -33,11 +33,8 @@ class GamePieces::Pawn < GamePieces::ChessPiece
   end
   
   def new_file_position( navigation )
-    if navigation == :previous
-      Position::FILE_POSITIONS[Position::FILE_POSITIONS.index( position.file ) - 1]
-    else
-      Position::FILE_POSITIONS[Position::FILE_POSITIONS.index( position.file ) + 1]
-    end
+    index = FileCheckerFactory.create_for( position, navigation )
+    Position::FILE_POSITIONS[index]
   end
   
   def update_en_passant_status!
@@ -50,23 +47,15 @@ class GamePieces::Pawn < GamePieces::ChessPiece
   
   private
   
-  def piece_move_forward_one_space( move_modifier ) # figure out how to combine this and #piece_move_forward_two_spaces methods together, pretty much exactly the same
+  def piece_move_forward_one_space
     if board.move_straight_one_space?( self )
-      if orientation == :down
-        [position.file, position.rank + move_modifier.first]
-      else
-        [position.file, position.rank + move_modifier.last]
-      end
+      PawnForwardOne::PawnForwardOneFactory.create_for( orientation, position )
     end
   end
 
-  def piece_move_forward_two_spaces( move_modifier )
+  def piece_move_forward_two_spaces
     if board.move_straight_two_spaces?( self )
-      if orientation == :down
-        [position.file, position.rank + move_modifier.first]
-      else
-        [position.file, position.rank + move_modifier.last]
-      end
+      PawnForwardTwo::PawnForwardTwoFactory.create_for( orientation, position )
     end
   end
   

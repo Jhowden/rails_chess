@@ -4,7 +4,7 @@ describe GamePieces::Pawn do
   let(:board) { double( "board", chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
   let(:pawn) { described_class.new( { file: "b", rank: 2, team: :black, board: board, 
     orientation: :up, capture_through_en_passant: true } ) }
-  let(:pawn2) { described_class.new( { file: "b", rank: 1, team: :white, board: board, 
+  let(:pawn2) { described_class.new( { file: "d", rank: 5, team: :white, board: board, 
     orientation: :down, capture_through_en_passant: true } ) }
   
   before :each do
@@ -16,18 +16,39 @@ describe GamePieces::Pawn do
 
   describe "#determine_possible_moves" do
     context "when there are no diagonal enemies and no forward blockers" do
-      it "has two possible move" do
-        allow( board ).to receive( :move_straight_one_space? ).with( pawn ).and_return( true )
-        allow( board ).to receive( :move_straight_two_spaces? ).with( pawn ).and_return( true )
+      
+      it "asks the board if it can move one space" do
+        pawn.determine_possible_moves
+        
+        expect( board ).to have_received( :move_straight_one_space?)
+      end
+      
+      it "asks the board if it can move two spaces" do
+        pawn.determine_possible_moves
+        
+        expect( board ).to have_received( :move_straight_two_spaces?)
+      end
+      
+      it "has two possible moves" do
+        allow( board ).to receive( :move_straight_one_space? ).and_return( true )
+        allow( board ).to receive( :move_straight_two_spaces? ).and_return( true )
     
         pawn.determine_possible_moves
-        expect( pawn.possible_moves.size ).to eq( 2 )
+        expect( pawn.possible_moves ).to eq( [["b", 3], ["b", 4]] )
+      end
+      
+      it "has two possible moves" do
+        allow( board ).to receive( :move_straight_one_space? ).and_return( true )
+        allow( board ).to receive( :move_straight_two_spaces? ).and_return( true )
+    
+        pawn2.determine_possible_moves
+        expect( pawn2.possible_moves ).to eq( [["d", 4], ["d", 3]] )
       end
     end
 
     context "when there are diagonal enemies and forward blockers" do         
       it "returns only two possible moves" do
-        allow( board ).to receive( :move_straight_one_space? ).with( pawn ).and_return( true )
+        allow( board ).to receive( :move_straight_one_space? ).and_return( true )
         allow( board ).to receive( :move_forward_diagonally? ).with( pawn, :right ).and_return( true )
     
         pawn.determine_possible_moves
@@ -147,6 +168,16 @@ describe GamePieces::Pawn do
     it "returns false if the pawn can't be captured through en passant" do
       pawn.update_en_passant_status!
       expect( pawn.can_be_captured_en_passant? ).to be_falsey
+    end
+  end
+  
+  describe "new_file_position" do
+    it "returns the previous file position" do
+      expect( pawn.new_file_position( :previous ) ).to eq "a"
+    end
+    
+    it "returns the next file position" do
+      expect( pawn.new_file_position( :next ) ).to eq "c"
     end
   end
 end

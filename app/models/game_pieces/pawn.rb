@@ -75,3 +75,11 @@ class GamePieces::Pawn < GamePieces::ChessPiece
     end
   end
 end
+
+class PawnDiagonalFactory
+  def create_for( orientation )
+    if const_defined?( "PawnDiagonal#{orientation.capitalize}" )
+      get_const( "PawnDiagonal#{orientation.capitalize}" )
+    end
+  end
+end

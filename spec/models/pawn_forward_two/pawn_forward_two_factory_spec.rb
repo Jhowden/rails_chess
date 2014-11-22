@@ -21,5 +21,9 @@ describe PawnForwardTwo::PawnForwardTwoFactory do
       described_class.create_for( :up, position )
       expect( PawnForwardTwo::PawnUpTwo ).to have_received( :possible_move ).with position
     end
+    
+    it "raises an exception when it can't get constant" do
+      expect{ described_class.create_for( :sideways, position ) }.to raise_error TypeError
+    end
   end
 end

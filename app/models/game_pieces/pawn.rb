@@ -60,26 +60,34 @@ class GamePieces::Pawn < GamePieces::ChessPiece
   end
   
   def piece_move_forward_diagonally( direction )
-    if orientation == :up
-      if direction == :left && board.move_forward_diagonally?( self, :left )
-        [new_file_position( :previous ), position.rank + 1]
-      elsif direction == :right && board.move_forward_diagonally?( self, :right )
-        [new_file_position( :next ), position.rank + 1]
-      end
-    else
-      if direction == :left && board.move_forward_diagonally?( self, :left )
-        [new_file_position( :next ), position.rank - 1]
-      elsif direction == :right && board.move_forward_diagonally?( self, :right )
-        [new_file_position( :previous ), position.rank - 1]
-      end
-    end
+    PawnDiagonalFactory.create_for( self, direction, orientation )
   end
 end
 
 class PawnDiagonalFactory
-  def create_for( orientation )
+  def self.create_for( pawn, direction, orientation )
     if const_defined?( "PawnDiagonal#{orientation.capitalize}" )
-      get_const( "PawnDiagonal#{orientation.capitalize}" )
+      const_get( "PawnDiagonal#{orientation.capitalize}" ).move_diagonal( pawn, direction )
+    end
+  end
+end
+
+class PawnDiagonalUp
+  def self.move_diagonal( pawn, direction )
+    if direction == :left && pawn.board.move_forward_diagonally?( pawn, :left )
+      [pawn.new_file_position( :previous ), pawn.position.rank + 1]
+    elsif direction == :right && pawn.board.move_forward_diagonally?( pawn, :right )
+      [pawn.new_file_position( :next ), pawn.position.rank + 1]
+    end
+  end
+end
+
+class PawnDiagonalDown
+  def self.move_diagonal( pawn, direction )
+    if direction == :left && pawn.board.move_forward_diagonally?( pawn, :left )
+      [pawn.new_file_position( :next ), pawn.position.rank - 1]
+    elsif direction == :right && pawn.board.move_forward_diagonally?( pawn, :right )
+      [pawn.new_file_position( :previous ), pawn.position.rank - 1]
     end
   end
 end

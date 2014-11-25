@@ -2,6 +2,7 @@ require "en_passant_commands"
 require "file_checker_factory"
 require "pawn_forward_one/pawn_forward_one_factory"
 require "pawn_forward_two/pawn_forward_two_factory"
+require "pawn_diagonal/pawn_diagonal_factory"
 
 class GamePieces::Pawn < GamePieces::ChessPiece
   include EnPassantCommands
@@ -60,34 +61,6 @@ class GamePieces::Pawn < GamePieces::ChessPiece
   end
   
   def piece_move_forward_diagonally( direction )
-    PawnDiagonalFactory.create_for( self, direction, orientation )
-  end
-end
-
-class PawnDiagonalFactory
-  def self.create_for( pawn, direction, orientation )
-    if const_defined?( "PawnDiagonal#{orientation.capitalize}" )
-      const_get( "PawnDiagonal#{orientation.capitalize}" ).move_diagonal( pawn, direction )
-    end
-  end
-end
-
-class PawnDiagonalUp
-  def self.move_diagonal( pawn, direction )
-    if direction == :left && pawn.board.move_forward_diagonally?( pawn, :left )
-      [pawn.new_file_position( :previous ), pawn.position.rank + 1]
-    elsif direction == :right && pawn.board.move_forward_diagonally?( pawn, :right )
-      [pawn.new_file_position( :next ), pawn.position.rank + 1]
-    end
-  end
-end
-
-class PawnDiagonalDown
-  def self.move_diagonal( pawn, direction )
-    if direction == :left && pawn.board.move_forward_diagonally?( pawn, :left )
-      [pawn.new_file_position( :next ), pawn.position.rank - 1]
-    elsif direction == :right && pawn.board.move_forward_diagonally?( pawn, :right )
-      [pawn.new_file_position( :previous ), pawn.position.rank - 1]
-    end
+    PawnDiagonal::PawnDiagonalFactory.create_for( self, board, direction, orientation )
   end
 end

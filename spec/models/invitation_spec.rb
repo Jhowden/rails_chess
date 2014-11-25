@@ -28,7 +28,7 @@ describe Invitation, :type => :model do
   describe ".create_game_link" do
     it "creates the game_link" do
       invitation = Invitation.new( game_id: 7 )
-      expect( invitation.create_game_link ).to eq( "game/7/home")
+      expect( Invitation.create_game_link( 7 ) ).to eq( "game/7/home")
     end
   end
 end

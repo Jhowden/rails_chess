@@ -8,13 +8,14 @@ describe SendInviteSetup do
   let( :player ) { double( "player", id: 1 ) }
   let( :controller ) { double( "controller" ) }
   let( :send_invite_setup ) { described_class.new( controller, params, player ) }
+  let( :board ) { double( "board", chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
   
   before :each do    
     allow( Game ).to receive( :new ).and_return game
     allow( game ).to receive( :save! ).and_return true
-    allow( invite ).to receive( :create_game_link )
     
     allow( Invitation ).to receive( :new ).and_return invite
+    allow( Invitation ).to receive( :create_game_link ).and_return "game/1/home"
     allow( invite ).to receive( :save! ).and_return true
     
     allow( controller ).to receive( :invitation_successfully_created )
@@ -23,8 +24,8 @@ describe SendInviteSetup do
     allow( BoardJsonifier ).to receive( :jsonify_board ).and_return "[]"
 
     stub_const( "Board", Class.new )
-    allow( Board ).to receive( :new ).and_return Board
-    allow( Board ).to receive( :place_pieces_on_board ).and_return []
+    allow( Board ).to receive( :new ).and_return board
+    allow( board ).to receive( :place_pieces_on_board ).and_return []
   end
   
   describe "#call" do
@@ -37,13 +38,13 @@ describe SendInviteSetup do
     it "builds up the board" do
       send_invite_setup.call
       
-      expect( Board ).to have_received( :place_pieces_on_board )
+      expect( board ).to have_received( :place_pieces_on_board )
     end
     
     it "jsonfies the board" do
       send_invite_setup.call
       
-      expect( BoardJsonifier ).to have_received( :jsonify_board ).with( [] )
+      expect( BoardJsonifier ).to have_received( :jsonify_board ).with( Array.new( 8 ) { |cell| Array.new( 8 ) } )
     end
        
     it "instantiates a new Game" do
@@ -68,21 +69,24 @@ describe SendInviteSetup do
     end
     
     context "when a game can be saved" do
-      it "instantiates a new Invitation" do
+      before :each do
         allow( game ).to receive( :id ).and_return 1
-        
+      end
+      
+      it "instantiates a new Invitation" do
         send_invite_setup.call
         
         expect( Invitation ).to have_received( :new ).with(
           sender_id: player.id,
           receiver_id: 2,
-          game_id: 1 )
+          game_id: 1,
+          game_link: "game/1/home" )
       end
       
       it "sets the game link" do
         send_invite_setup.call
         
-        expect( invite ).to have_received( :create_game_link )
+        expect( Invitation ).to have_received( :create_game_link ).with 1
       end
       
       context "when an Invitation can be saved" do

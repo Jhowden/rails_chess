@@ -12,6 +12,7 @@ describe InvitationsController do
       allow( SendInviteSetup ).to receive( :new ).and_return send_invite_setup
       session[:user_id] = player.id
     end
+    
     it "instantiates a new SendInviteSetup" do
       post :send_invite, params
       

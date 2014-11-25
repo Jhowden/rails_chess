@@ -1,7 +1,7 @@
 class BoardJsonifier
   def self.jsonify_board( board )
     transformed_board = transform_board board
-    transformed_board.to_json
+    JSON.generate transformed_board
   end
   
   def self.translate_json_board( json_board )

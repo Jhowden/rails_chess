@@ -22,7 +22,7 @@ class Board
   
   def place_pieces_on_board
     TEAM_COLORS.each do |team|
-      pieces = PiecesFactory.new( team ).build.pieces
+      pieces = PiecesFactory.new( team ).build
       pieces.each do |piece|
         update_board( piece )
       end

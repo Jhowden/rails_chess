@@ -19,7 +19,6 @@ class SendInviteSetup
   def save_the_game( game )
     if game.save!
       invitation = create_invitation( game.id )
-      invitation.create_game_link
       
       save_the_invitation( invitation )  
     else
@@ -37,8 +36,9 @@ class SendInviteSetup
   end
   
   def create_game( board_dimension = Array.new( 8 ) { |cell| Array.new( 8 ) } )
-    board = Board.new( board_dimension ).place_pieces_on_board
-    json_board = BoardJsonifier.jsonify_board board
+    board = Board.new( board_dimension )
+    board.place_pieces_on_board
+    json_board = BoardJsonifier.jsonify_board board.chess_board
     Game.new( 
       white_team_id: player.id, 
       black_team_id: params["receiver_id"].to_i,
@@ -50,6 +50,7 @@ class SendInviteSetup
     Invitation.new(
       sender_id: player.id,
       receiver_id: params["receiver_id"].to_i,
-      game_id: game_id )
+      game_id: game_id,
+      game_link: Invitation.create_game_link( game_id ) )
   end
 end

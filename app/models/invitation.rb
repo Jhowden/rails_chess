@@ -5,7 +5,7 @@ class Invitation < ActiveRecord::Base
 
   validates_presence_of :sender_id, :receiver_id, :game_link, :game_id
   
-  def create_game_link
+  def self.create_game_link game_id
     "game/#{game_id}/home"
   end
 end

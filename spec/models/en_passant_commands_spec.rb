@@ -2,10 +2,10 @@ require "rails_helper"
 
 describe EnPassantCommands do
   let( :board ) { double( chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let( :pawn ) { GamePieces::Pawn.new( { file: "e", rank: 4, team: :black, board: board, 
-    orientation: :down, capture_through_en_passant: true } ).extend described_class }
-  let( :pawn2 ) { GamePieces::Pawn.new( { file: "e", rank: 5, team: :white, board: board,
-    orientation: :up, capture_through_en_passant: true } ).extend described_class }
+  let( :pawn ) { GamePieces::Pawn.new( { "file" => "e", "rank" => 4, "team" => :black, "board" => board, 
+    "orientation" => :down, "capture_through_en_passant" => true } ).extend described_class }
+  let( :pawn2 ) { GamePieces::Pawn.new( { "file" => "e", "rank" => 5, "team" => :white, "board" => board,
+    "orientation" => :up, "capture_through_en_passant" => true } ).extend described_class }
   let( :pawn_ep ) { double( "pawn_ep" ) }
     
   before :each do

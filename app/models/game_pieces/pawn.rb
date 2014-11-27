@@ -11,8 +11,8 @@ class GamePieces::Pawn < GamePieces::ChessPiece
   
   def initialize( details )
     super( details )
-    @orientation = details[:orientation]
-    @capture_through_en_passant = details[:capture_through_en_passant]
+    @orientation = details["orientation"].to_sym
+    @capture_through_en_passant = details["capture_through_en_passant"]
     @board_marker = determine_board_marker
   end
   

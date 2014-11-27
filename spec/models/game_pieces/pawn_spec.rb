@@ -2,10 +2,10 @@ require "rails_helper"
 
 describe GamePieces::Pawn do
   let(:board) { double( "board", chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let(:pawn) { described_class.new( { file: "b", rank: 2, team: :black, board: board, 
-    orientation: :up, capture_through_en_passant: true } ) }
-  let(:pawn2) { described_class.new( { file: "d", rank: 5, team: :white, board: board, 
-    orientation: :down, capture_through_en_passant: true } ) }
+  let(:pawn) { described_class.new( { "file" => "b", "rank" => 2, "team" => "black", "board" => board, 
+    "orientation" => "up", "capture_through_en_passant" => true } ) }
+  let(:pawn2) { described_class.new( { "file" => "d", "rank" => 5, "team" => "white", "board" => board, 
+    "orientation" => "down", "capture_through_en_passant" => true } ) }
   
   before :each do
     allow( board ).to receive( :move_straight_one_space? )

@@ -3,8 +3,8 @@ require "rails_helper"
 describe GamePieces::Queen do
 
   let(:board) { double( chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let(:queen) { described_class.new( { file: "e", rank: 4, team: :black, board: board } ) }
-  let(:queen2) { described_class.new( { file: "e", rank: 4, team: :white, board: board } ) }
+  let(:queen) { described_class.new( { "file" => "e", "rank" => 4, "team" => :black, "board" => board } ) }
+  let(:queen2) { described_class.new( { "file" => "e", "rank" => 4, "team" => :white, "board" => board } ) }
 
   describe "#determine_possible_moves" do
     it "returns an array of possible locations" do

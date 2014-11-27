@@ -3,8 +3,8 @@ require "rails_helper"
 describe GamePieces::King do
 
   let( :board ) { double( chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let( :king ) { described_class.new( { file: "e", rank: 4, team: :black, board: board, checkmate: false } ) }
-  let( :king2 ) { described_class.new( { file: "e", rank: 4, team: :white, board: board, checkmate: false } ) }
+  let( :king ) { described_class.new( { "file" => "e", "rank" => 4, "team" => :black, "board" => board, "checkmate" => false } ) }
+  let( :king2 ) { described_class.new( { "file" => "e", "rank" => 4, "team" => :white, "board" => board, "checkmate" => false } ) }
 
   describe "#determine_possible_moves" do
     it "returns an array of possible locations" do

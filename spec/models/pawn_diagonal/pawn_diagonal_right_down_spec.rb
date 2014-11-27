@@ -2,8 +2,8 @@ require "rails_helper"
 
 describe PawnDiagonal::PawnDiagonalRightDown do
   let( :board ) { double( "board" ) }
-  let( :pawn ) { GamePieces::Pawn.new( { file: "e", rank: 4, 
-    orientation: :down, board: board } ) }
+  let( :pawn ) { GamePieces::Pawn.new( { "file" => "e", "rank" => 4, 
+    "orientation" => :down, "board" => board, "team" => "white" } ) }
   
   before :each do
     allow( board ).to receive( :move_forward_diagonally? ).

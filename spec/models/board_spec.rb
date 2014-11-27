@@ -2,16 +2,16 @@ require 'rails_helper'
 
 describe Board do
   let( :board ) { described_class.new( Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let( :piece ) { double( position: Position.new( "f", 5 ), team: :black, orientation: :up, 
+  let( :piece ) { double( position: Position.new( "f", 5 ), "team" => :black, "orientation" => :up, 
                         move_counter: 0 ) }
-  let( :piece2 ) { double( position: Position.new( "a", 8 ), team: :white, orientation: :up,
+  let( :piece2 ) { double( position: Position.new( "a", 8 ), "team" => :white, "orientation" => :up,
                         move_counter: 1 ) }
-  let( :rook ) { GamePieces::Rook.new( { file: "a", rank: 8, team: :white, captured: false } ) }
-  let( :bishop ) { GamePieces::Bishop.new( { file: "b", rank: 1, team: :black, captured: false } ) }
-  let( :pawn ) { GamePieces::Pawn.new( { file: "b", rank: 2, team: :black, 
-    orientation: :up, capture_through_en_passant: true, captured: false } ) }
-  let( :king ) { GamePieces::King.new( { file: "a", rank: 7, team: :white,
-    captured: false, checkmate: false } ) }
+  let( :rook ) { GamePieces::Rook.new( { "file" => "a", "rank" => 8, "team" => :white, "captured" => false } ) }
+  let( :bishop ) { GamePieces::Bishop.new( { "file" => "b", "rank" => 1, "team" => :black, "captured" => false } ) }
+  let( :pawn ) { GamePieces::Pawn.new( { "file" => "b", "rank" => 2, "team" => :black, 
+    "orientation" => :up, "capture_through_en_passant" => true, "captured" => false } ) }
+  let( :king ) { GamePieces::King.new( { "file" => "a", "rank" => 7, "team" => :white,
+    "captured" => false, "checkmate" => false } ) }
   let( :pieces ) { [rook, pawn, bishop, king] }
   
   before :each do

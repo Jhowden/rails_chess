@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe GamePieces::ChessPiece do
   
-  let( :piece ) { described_class.new( {file: "a", rank: 0, team: :white} ) }
+  let( :piece ) { described_class.new( {"file" => "a", "rank" => 0, "team" => "white"} ) }
   let( :board ) { double( "board" ) }
   
   context "when passed no board" do
@@ -13,7 +13,7 @@ describe GamePieces::ChessPiece do
   
   context "when passed a board" do
     it "uses the new board" do
-      piece = described_class.new( {file: "a", rank: 0, team: :white, board: board} )
+      piece = described_class.new( {"file" => "a", "rank" => 0, "team" => :white, "board" => board} )
       expect( piece.board ).to eq board
     end
   end
@@ -26,7 +26,7 @@ describe GamePieces::ChessPiece do
   
   context "when passed a move_counter" do
     it "initializes with a move_counter of 0" do
-      piece = described_class.new( {file: "a", rank: 0, team: :white, move_counter: 4} )
+      piece = described_class.new( {"file" => "a", "rank" => 0, "team" => :white, "move_counter" => 4} )
       expect( piece.move_counter ).to eq 4
     end
   end

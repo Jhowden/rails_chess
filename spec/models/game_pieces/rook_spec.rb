@@ -3,8 +3,8 @@ require "rails_helper"
 describe GamePieces::Rook do
   
   let(:board) { double( chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let(:rook) { described_class.new( { file: "e", rank: 4, team: :black, board: board } ) }
-  let(:rook2) { described_class.new( { file: "e", rank: 4, team: :white, board: board } ) }
+  let(:rook) { described_class.new( { "file" => "e", "rank" => 4, "team" => :black, "board" => board } ) }
+  let(:rook2) { described_class.new( { "file" => "e", "rank" => 4, "team" => :white, "board" => board } ) }
 
   describe "#determine_possible_moves" do
     it "returns all possibile moves" do

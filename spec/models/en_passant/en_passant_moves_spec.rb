@@ -1,8 +1,8 @@
 require "rails_helper"
 
 describe EnPassant::EnPassantMoves do
-  let( :pawn ) { GamePieces::Pawn.new( { file: "h", rank: 4, team: :black, 
-    orientation: :down, capture_through_en_passant: true } ) }
+  let( :pawn ) { GamePieces::Pawn.new( { "file" => "h", "rank" => 4, "team" => :black, 
+    "orientation" => :down, "capture_through_en_passant" => true } ) }
   let( :ep ) { described_class.new( pawn ) }
   let( :position ) { Position.new( "a", 4 ) }
   

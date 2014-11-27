@@ -1,10 +1,10 @@
 require "rails_helper"
 
 describe EnPassant::CapturedPieceEnPassantTeamIdentifier do
-  let( :pawn ) { GamePieces::Pawn.new( { file: "e", rank: 4, team: :black, 
-    orientation: :down, capture_through_en_passant: true } ) }
-  let( :pawn2 ) { GamePieces::Pawn.new( { file: "e", rank: 5, team: :white,
-    orientation: :up, capture_through_en_passant: true } ) }
+  let( :pawn ) { GamePieces::Pawn.new( { "file" => "e", "rank" => 4, "team" => :black, 
+    "orientation" => :down, "capture_through_en_passant" => true } ) }
+  let( :pawn2 ) { GamePieces::Pawn.new( { "file" => "e", "rank" => 5, "team" => :white,
+    "orientation" => :up, "capture_through_en_passant" => true } ) }
   
   describe ".select_pieces" do
     context "when team is black" do

@@ -6,7 +6,7 @@ class GamePieces::King < GamePieces::ChessPiece
   
   def initialize( details )
     super
-    @checkmate = details[:checkmate]
+    @checkmate = details["checkmate"]
     @board_marker = determine_board_marker
   end
 

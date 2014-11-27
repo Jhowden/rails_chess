@@ -4,8 +4,8 @@ require "next_file_location"
 
 describe EnPassant::DownEnPassantMoves do
   let( :board ) { double( chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
-  let( :pawn ) { GamePieces::Pawn.new( { file: "e", rank: 4, team: :white, board: board, 
-    orientation: :down, capture_through_en_passant: true } ) }
+  let( :pawn ) { GamePieces::Pawn.new( { "file" => "e", "rank" => 4, "team" => :white, "board" => board, 
+    "orientation" => :down, "capture_through_en_passant" => true } ) }
   let( :ep ) { described_class.new( pawn ) }
   
   describe "#check_for_enpassant" do

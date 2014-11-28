@@ -6,7 +6,8 @@ class UsersController < ApplicationController
   end
   
   def show
-    @invitations = current_user.invitations
+    @sent_invitations = @user.sent_invitations
+    @received_invitations = @user.received_invitations
   end
   
   def edit

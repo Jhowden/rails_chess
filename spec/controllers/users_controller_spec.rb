@@ -18,7 +18,8 @@ describe UsersController do
   describe "GET #show" do
     before :each do
       allow( User ).to receive( :find ).and_return user
-      allow( user ).to receive( :invitations )
+      allow( user ).to receive( :sent_invitations )
+      allow( user ).to receive( :received_invitations )
       session[:user_id] = user.id
     end
     
@@ -32,12 +33,16 @@ describe UsersController do
       expect( User ).to have_received( :find ).with( user.id.to_s )
     end
     
-    it "looks up the games the User is in" do
-      allow( user ).to receive( :invitations )
-      
+    it "looks up the invitations sent by the User" do
       get :show, id: user
       
-      expect( user ).to have_received( :invitations )
+      expect( user ).to have_received( :sent_invitations )
+    end
+    
+    it "looks up the invitations received by the User" do
+      get :show, id: user
+      
+      expect( user ).to have_received( :received_invitations )
     end
     
     after :each do

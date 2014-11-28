@@ -1,13 +1,31 @@
 
 <h1>List of Game Invitations</h1>
-<% unless @invitations.count == 0 %>
+<h2>List of sent invitations</h2>
+<% unless @sent_invitations.count == 0 %>
   <table>
     <tr>
       <th>Sender</th>
       <th>Receiver</th>
       <th>Game Link</th>
     </tr>
-    <% @invitations.each do |invite| %>
+    <% @sent_invitations.each do |invite| %>
+      <tr>
+        <td><%= invite.sender.fullname %></td>
+        <td><%= invite.receiver.fullname %></td>
+        <td><%= link_to "Game", game_home_path( invite.game ) %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+<h2>List of received invitations</h2>
+<% unless @received_invitations.count == 0 %>
+  <table>
+    <tr>
+      <th>Sender</th>
+      <th>Receiver</th>
+      <th>Game Link</th>
+    </tr>
+    <% @received_invitations.each do |invite| %>
       <tr>
         <td><%= invite.sender.fullname %></td>
         <td><%= invite.receiver.fullname %></td>

@@ -1,0 +1,19 @@
+<%= stylesheet_link_tag "games/home" %>
+
+
+<h2><%= @game.white_team.first_name %> VS <%= @game.black_team.first_name %></h2>
+<h5>Last move was at: <%= @game.updated_at %></h5>
+
+<% @board.each do |rank| %>
+  <table>
+    <% rank.each do |file| %>
+    <tr>
+      <% if file.nil? %>
+      |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <% else %>
+      | <%= file.board_marker %>
+      <% end %>
+    </tr>
+    <% end %>
+  </table>
+<% end %>

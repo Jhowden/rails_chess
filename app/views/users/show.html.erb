@@ -29,7 +29,7 @@
       <tr>
         <td><%= invite.sender.fullname %></td>
         <td><%= invite.receiver.fullname %></td>
-        <td><%= invite.game_link %></td>
+        <td><%= link_to "Game", game_home_path( invite.game ) %></td>
       </tr>
     <% end %>
   </table>

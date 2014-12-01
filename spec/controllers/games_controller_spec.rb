@@ -13,7 +13,7 @@ describe GamesController do
     allow( BoardJsonParser ).to receive( :translate_json_board )
   end
   
-  describe "GET #index" do
+  describe "GET #home" do
     it "finds the Game" do
       get :home, game_id: 2
       
@@ -25,6 +25,20 @@ describe GamesController do
       
       expect( BoardJsonParser ).to have_received( :translate_json_board ).
         with json_board
+    end
+    
+    it "renders the home template" do
+      get :home, game_id: 2
+      
+      expect( response ).to render_template :home
+    end
+  end
+  
+  describe "POST #input" do
+    it "redirects to the game_home page" do
+      post :input, { "user_input" => "a3 b4", "en_passant" => "1", "game_id" => "#{game.id}" }
+      
+      expect( response ).to redirect_to game_home_path( game.id )
     end
   end
 end

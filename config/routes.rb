@@ -16,6 +16,7 @@ MultiplayerChess::Application.routes.draw do
   post "send_invite/:receiver_id" => "invitations#send_invite", as: :send_invite
   
   get "game/:game_id/home" => "games#home", as: :game_home
+  post "game/:game_id/game_input" => "games#input", as: :game_input
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

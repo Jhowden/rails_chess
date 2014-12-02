@@ -20,11 +20,13 @@
 
 <% if @game.player_turn == current_user.id %>
   <%= form_tag(game_input_path( @game ), method: "post") do %>
-    <%= label_tag(:user_input, "Input command:") %>
-    <%= text_field_tag(:user_input) %>
-    <%= check_box_tag(:en_passant) %>
-    <%= label_tag(:en_passant, "en_passant") %>
-    <%= submit_tag("Submit Move") %>
+    <%= label_tag( :piece_location, "Select the piece you want to move:" ) %>
+    <%= text_field_tag( :piece_location, '', placeholder: "ex: a4", size: 5 ) %></br>
+    <%= label_tag( :target_location, "Select the location you want to move the piece to:" ) %>
+    <%= text_field_tag( :target_location, '', placeholder: "ex: d6", size: 5 ) %>
+    <%= check_box_tag( :en_passant ) %>
+    <%= label_tag( :en_passant, "en_passant" ) %>
+    <%= submit_tag( "Submit Move" ) %>
   <% end %>
   <% else %>
   <p>Waiting for your opponent to move.</p>

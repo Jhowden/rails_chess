@@ -3,6 +3,7 @@ require "rails_helper"
 describe GamesController do
   let( :game ) { stub_model Game }
   let( :json_board ) { JSON.generate( Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
+  let( :new_game ) { double( "new_game" ) }
   
   before :each do
     allow( Game ).to receive( :find ).and_return game
@@ -11,6 +12,10 @@ describe GamesController do
     
     stub_const( "BoardJsonParser", Class.new )
     allow( BoardJsonParser ).to receive( :translate_json_board )
+    
+    stub_const( "PlayGame", Class.new )
+    allow( PlayGame ).to receive( :new ).and_return new_game
+    allow( new_game ).to receive( :call )
   end
   
   describe "GET #home" do
@@ -35,10 +40,37 @@ describe GamesController do
   end
   
   describe "POST #input" do
+    let( :params ) { { "piece_location"=>"a4", "target_location"=>"d6", "en_passant"=>"1", "game_id" => "#{game.id}" } }
+    
     it "redirects to the game_home page" do
-      post :input, { "user_input" => "a3 b4", "en_passant" => "1", "game_id" => "#{game.id}" }
+      post :input, params
       
       expect( response ).to redirect_to game_home_path( game.id )
+    end
+    
+    context "when player selects en_passant" do
+      it "instantiates a new PlayGame object" do
+        post :input, params
+      
+        expect( PlayGame ).to have_received( :new ).
+          with( params.merge( "controller"=>"games", "action"=>"input" ), controller )
+      end
+    end
+    
+    context "when player does NOT select en_passant" do
+      it "instantiates a new PlayGame object" do
+        params_without_en_passant = { "piece_location"=>"a4", "target_location"=>"d6", "en_passant"=>"1", "game_id" => "#{game.id}" }
+        post :input, params_without_en_passant
+      
+        expect( PlayGame ).to have_received( :new ).
+          with( params_without_en_passant.merge( "controller"=>"games", "action"=>"input" ), controller )
+      end
+    end
+    
+    it do
+      post :input, params
+      
+      expect( new_game ).to have_received( :call )
     end
   end
 end

@@ -10,6 +10,10 @@ class GamesController < ApplicationController
     # if input is bad, render same template and ask for new input
     
     # put into UserCommands object to correctly parse input string ( with e.p. at end ) and pass into Game object that does logic stuff
+    
+    # have a PlayGame class that is a wrapper around everything. I takes in the user_input and then goes off.. 
+    # this would have PlayGame have a lot of knowledge of other objects...
+    PlayGame.new( params, self ).call
     redirect_to game_home_path( @game )
   end
   

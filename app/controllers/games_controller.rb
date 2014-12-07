@@ -17,6 +17,10 @@ class GamesController < ApplicationController
     redirect_to game_home_path( @game )
   end
   
+  def on_invalid_input
+    flash[:error] = "Input was invalid. Please try again."
+  end
+  
   private
   
   def find_game

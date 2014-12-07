@@ -12,7 +12,7 @@ describe PlayGame do
       "game_id" => "8"
     }
   end
-  let( :observer ) { double( "observer" ) }
+  let( :observer ) { double( "observer", on_invalid_input: nil ) }
   let( :playgame ) { described_class.new params, observer }
   let( :user_command ) { double( "user_command" ) }
   
@@ -34,6 +34,16 @@ describe PlayGame do
       playgame.call
       
       expect( user_command ).to have_received( :valid_input? )
+    end
+    
+    context "when the input is invalid" do
+      it "messages the controller that it failed" do
+        allow( user_command ).to receive( :valid_input? ).and_return false
+        
+        playgame.call
+        
+        expect( observer ).to have_received( :on_invalid_input )
+      end
     end
   end
 end

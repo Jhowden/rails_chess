@@ -73,4 +73,12 @@ describe GamesController do
       expect( new_game ).to have_received( :call )
     end
   end
+  
+  describe "#on_invalid_input" do
+    it "sets a failing flash message" do
+      controller.on_invalid_input
+      
+      expect( flash[:error] ).to match /invalid/
+    end
+  end
 end

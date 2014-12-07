@@ -3,28 +3,82 @@ require "rails_helper"
 describe UserCommand do
   let( :good_input ) do
     {
-      "piece_location" => "a4", 
+      "piece_location"  => "a4", 
       "target_location" => "d6", 
-      "en_passant" => "1"
+      "en_passant"      => "e.p."
     }
   end
+  
   let( :bad_input ) do
     {
-      "piece_location" => "a4", 
+      "piece_location"  => "a4", 
       "target_location" => "l6"
     }
   end
+  
+  let( :castle_and_regular_bad_input ) do
+    {
+      "piece_location"  => "a4", 
+      "target_location" => "d6", 
+      "castle"          => "0-0"
+    }
+  end
+  
+  let( :ep_and_castle_bad_input ) do
+    {
+      "piece_location"  => "", 
+      "target_location" => "", 
+      "en_passant"      => "e.p.",
+      "castle"          => "0-0"
+    }
+  end
+  
+  let( :queen_castle_input ) do
+    {
+      "piece_location"    => "", 
+      "target_location"   => "", 
+      "castle"            => "0-0-0"
+    }
+  end
+  
+  let( :king_castle_input ) do
+    {
+      "piece_location"    => "", 
+      "target_location"   => "", 
+      "castle"            => "0-0"
+    }
+  end
+  
   let( :user_command ) { described_class.new( input ) }
   
   describe "#valid_input?" do
-    it "returns true if the input is valid" do
-      user_command = described_class.new good_input
-      expect( user_command.valid_input? ).to be_truthy
-    end
+    context "when input is valid" do
+      it "returns true if the target and piece location range is valid" do
+        user_command = described_class.new good_input
+        expect( user_command.valid_input? ).to be_truthy
+      end
     
-    it "returns false if the input is invalid" do
-      user_command = described_class.new bad_input
-      expect( user_command.valid_input? ).to be_falsey
+      it "returns true if user selects to castle" do
+        user_command = described_class.new queen_castle_input
+        expect( user_command.valid_input? ).to be_truthy
+      end
+    end
+
+    context "when an invalid input" do
+      it "returns false if the target and piece location range is invalid" do
+        user_command = described_class.new bad_input
+        expect( user_command.valid_input? ).to be_falsey
+      end
+      
+      it "returns false if there is piece and/or target location selected with castle" do
+        user_command = described_class.new castle_and_regular_bad_input
+        expect( user_command.valid_input? ).to be_falsey
+      end
+      
+      it "returns false if en_passant is selected with castle" do
+        user_command = described_class.new ep_and_castle_bad_input
+        expect( user_command.valid_input? ).to be_falsey
+      end
     end
   end
   
@@ -47,8 +101,27 @@ describe UserCommand do
         expect( user_command.parsed_input ).to eq(
          {
            "piece_location" => { "file" => "a", "rank" => "4" },
-           "target_location" => { "file" => "l", "rank" => "6" },
-           "en_passant" => ""
+           "target_location" => { "file" => "l", "rank" => "6" }
+          } )
+      end
+    end
+    
+    context "when player selected king_side_castle" do
+      it "returns the parsed input" do
+        user_command = described_class.new king_castle_input
+        expect( user_command.parsed_input ).to eq(
+         {
+           "castle" => "0-0"
+          } )
+      end
+    end
+    
+    context "when player selected queen_side_castle" do
+      it "returns the parsed input" do
+        user_command = described_class.new queen_castle_input
+        expect( user_command.parsed_input ).to eq(
+         {
+           "castle" => "0-0-0"
           } )
       end
     end

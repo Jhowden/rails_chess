@@ -1,5 +1,10 @@
+require "parsed_input/standard"
+require "parsed_input/en_passant"
+require "parsed_input/castle"
+
 class UserCommand
   VALID_USER_MOVE_INPUT = /^[a-h]{1}[1-8]{1}$/
+  BLANK_LOCATION = ""
   
   attr_reader :piece_location, :target_location, :en_passant, :castle_input
   
@@ -11,27 +16,29 @@ class UserCommand
   end
   
   def valid_input?
-    return false if invalid_input
+    return false if incorrect_input?
     
     castle_input ||
       [piece_location, target_location].
         all? { |input| input =~ VALID_USER_MOVE_INPUT }
   end
   
-  def parsed_input
+  def get_input
     if en_passant
-      starting_input_map.merge( "en_passant" => en_passant )
+      ParsedInput::EnPassant.new starting_input_map
     elsif castle_input
-      {"castle" => castle_input}
+      ParsedInput::Castle.new castle_input
     else
-      starting_input_map
+      ParsedInput::Standard.new starting_input_map
     end
   end
   
   private
   
   def starting_input_map
-    {
+    return @input_map if @input_map
+    
+    @input_map = {
       "piece_location" => 
         { 
           "file" => piece_location.first, 
@@ -46,14 +53,15 @@ class UserCommand
   end
   
   def castle_and_location_input?
-    castle_input && target_location != "" || castle_input && piece_location != ""
+    castle_input && target_location != BLANK_LOCATION || 
+      castle_input && piece_location != BLANK_LOCATION
   end
   
   def castle_and_en_passant_input?
     castle_input && en_passant
   end
   
-  def invalid_input
+  def incorrect_input?
     castle_and_location_input? || castle_and_en_passant_input?
   end
 end

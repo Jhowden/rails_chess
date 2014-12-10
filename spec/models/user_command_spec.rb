@@ -9,6 +9,13 @@ describe UserCommand do
     }
   end
   
+  let( :standard_input ) do
+    {
+      "piece_location"  => "a4", 
+      "target_location" => "d6"
+    }
+  end
+  
   let( :bad_input ) do
     {
       "piece_location"  => "a4", 
@@ -51,6 +58,17 @@ describe UserCommand do
   
   let( :user_command ) { described_class.new( input ) }
   
+  before :each do
+    stub_const( "ParsedInput::Standard", Class.new )
+    allow( ParsedInput::Standard ).to receive( :new )
+    
+    stub_const( "ParsedInput::EnPassant", Class.new )
+    allow( ParsedInput::EnPassant ).to receive( :new )
+    
+    stub_const( "ParsedInput::Castle", Class.new )
+    allow( ParsedInput::Castle ).to receive( :new )
+  end
+  
   describe "#valid_input?" do
     context "when input is valid" do
       it "returns true if the target and piece location range is valid" do
@@ -82,47 +100,58 @@ describe UserCommand do
     end
   end
   
-  describe "#parsed_input" do
+  describe "#get_input" do
     context "when a player selected en_passant" do
-      it "returns the parsed input" do
+      it "returns the input type" do
         user_command = described_class.new good_input
-        expect( user_command.parsed_input ).to eq(
-         {
-           "piece_location" => { "file" => "a", "rank" => "4" },
-           "target_location" => { "file" => "d", "rank" => "6" },
-           "en_passant" => "e.p."
-          } )
+        
+        user_command.get_input
+        
+        expect( ParsedInput::EnPassant ).to have_received( :new ).with(
+           {
+             "piece_location" => { "file" => "a", "rank" => "4" },
+             "target_location" => { "file" => "d", "rank" => "6" }
+            }
+          )
       end
     end
     
     context "when a player did NOT select en_passant" do
-      it "returns the parsed input" do
-        user_command = described_class.new bad_input
-        expect( user_command.parsed_input ).to eq(
-         {
-           "piece_location" => { "file" => "a", "rank" => "4" },
-           "target_location" => { "file" => "l", "rank" => "6" }
-          } )
+      it "returns the input type" do
+        user_command = described_class.new standard_input
+        
+        user_command.get_input
+        
+        expect( ParsedInput::Standard ).to have_received( :new ).with( 
+            {
+              "piece_location" => { "file" => "a", "rank" => "4" },
+              "target_location" => { "file" => "d", "rank" => "6" }
+             }
+           )
       end
     end
     
     context "when player selected king_side_castle" do
-      it "returns the parsed input" do
+      it "returns the input type" do
         user_command = described_class.new king_castle_input
-        expect( user_command.parsed_input ).to eq(
-         {
-           "castle" => "0-0"
-          } )
+        
+        user_command.get_input
+        
+        expect( ParsedInput::Castle ).to have_received( :new ).with(
+          "0-0"
+        )
       end
     end
     
     context "when player selected queen_side_castle" do
-      it "returns the parsed input" do
+      it "returns the input type" do
         user_command = described_class.new queen_castle_input
-        expect( user_command.parsed_input ).to eq(
-         {
-           "castle" => "0-0-0"
-          } )
+        
+        user_command.get_input
+        
+        expect( ParsedInput::Castle ).to have_received( :new ).with(
+          "0-0-0"
+        )
       end
     end
   end

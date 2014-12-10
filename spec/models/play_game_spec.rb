@@ -12,7 +12,7 @@ describe PlayGame do
       "game_id" => "8"
     }
   end
-  let( :observer ) { double( "observer", on_invalid_input: nil ) }
+  let( :observer ) { double( "observer", on_failed_move: nil ) }
   let( :playgame ) { described_class.new params, observer }
   let( :user_command ) { double( "user_command" ) }
   
@@ -42,7 +42,7 @@ describe PlayGame do
         
         playgame.call
         
-        expect( observer ).to have_received( :on_invalid_input )
+        expect( observer ).to have_received( :on_failed_move )
       end
     end
   end

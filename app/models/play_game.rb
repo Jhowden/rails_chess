@@ -10,8 +10,12 @@ class PlayGame
   def call
     valid_input = UserCommand.new( params ).valid_input?
     if valid_input
+      # check to see if the game is over
+      # perform StartMoveSequence
+        # what do I need to pass in? GameBoard, Players, user_command, ???
+        # how do I figure out the pieces for each team?
     else
-      observer.on_invalid_input
+      observer.on_failed_move
     end
   end
 end

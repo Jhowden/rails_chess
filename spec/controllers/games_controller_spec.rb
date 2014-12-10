@@ -76,7 +76,7 @@ describe GamesController do
   
   describe "#on_invalid_input" do
     it "sets a failing flash message" do
-      controller.on_invalid_input
+      controller.on_failed_move
       
       expect( flash[:error] ).to match /invalid/
     end

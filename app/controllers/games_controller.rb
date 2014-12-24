@@ -17,8 +17,8 @@ class GamesController < ApplicationController
     redirect_to game_home_path( @game )
   end
   
-  def on_failed_move
-    flash[:error] = "Input was invalid. Please try again."
+  def on_failed_move( message )
+    flash[:error] = message
   end
   
   private

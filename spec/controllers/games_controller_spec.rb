@@ -67,7 +67,7 @@ describe GamesController do
       end
     end
     
-    it do
+    it "calls call on PlayGame" do
       post :input, params
       
       expect( new_game ).to have_received( :call )
@@ -76,7 +76,7 @@ describe GamesController do
   
   describe "#on_invalid_input" do
     it "sets a failing flash message" do
-      controller.on_failed_move
+      controller.on_failed_move "Input was invalid. Please try again."
       
       expect( flash[:error] ).to match /invalid/
     end

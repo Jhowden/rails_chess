@@ -15,12 +15,18 @@ describe PlayGame do
   let( :observer ) { double( "observer", on_failed_move: nil ) }
   let( :playgame ) { described_class.new params, observer }
   let( :user_command ) { double( "user_command" ) }
+  let( :start_game ) { double( "start_game" ) }
+  let( :input ) { double( "input" ) }
   
   before :each do
     stub_const( "UserCommand", Class.new )
     allow( UserCommand ).to receive( :new ).and_return user_command
     allow( user_command ).to receive( :valid_input? ).and_return true
-    allow( user_command ).to receive( :parse )
+    allow( user_command ).to receive( :get_input ).and_return input
+    
+    stub_const( "StartMoveSequence", Class.new )
+    allow( StartMoveSequence ).to receive( :new ).and_return start_game
+    allow( start_game ).to receive( :start )
   end
   
   describe "#call" do
@@ -42,7 +48,21 @@ describe PlayGame do
         
         playgame.call
         
-        expect( observer ).to have_received( :on_failed_move )
+        expect( observer ).to have_received( :on_failed_move ).with "Input was invalid. Please try again."
+      end
+    end
+    
+    context "when the input is valid" do
+      it "instantiates a new StartMoveSequence" do
+        playgame.call
+        
+        expect( StartMoveSequence ).to have_received( :new ).with( observer, user_command.get_input, "8" )
+      end
+      
+      it "starts the move sequence" do
+        playgame.call
+        
+        expect( start_game ).to have_received( :start )
       end
     end
   end

@@ -1,5 +1,7 @@
 class PlayGame
-  attr_reader :params, :observer
+  attr_reader :params, :observer, :game_id
+  
+  INVALID_INPUT = "Input was invalid. Please try again."
 
   def initialize( params, observer )
     @params = params
@@ -8,14 +10,11 @@ class PlayGame
   end
   
   def call
-    valid_input = UserCommand.new( params ).valid_input?
-    if valid_input
-      # check to see if the game is over
-      # perform StartMoveSequence
-        # what do I need to pass in? GameBoard, Players, user_command, ???
-        # how do I figure out the pieces for each team?
+    command = UserCommand.new( params )
+    if command.valid_input?
+      StartMoveSequence.new( observer, command.get_input, game_id ).start
     else
-      observer.on_failed_move
+      observer.on_failed_move INVALID_INPUT
     end
   end
 end

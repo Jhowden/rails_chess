@@ -18,7 +18,9 @@
   </table>
 <% end %>
 
-<% if @game.player_turn == current_user.id %>
+<% if @game.winner != nil %>
+  <p><%= Game.find( @game.winner ).fullname %> has won the game on <%= @game.updated_at%></p>
+<% elsif @game.player_turn == current_user.id %>
   <%= form_tag( game_input_path( @game ), method: "post" ) do %>
     <%= label_tag( :piece_location, "Select the piece you want to move:" ) %>
     <%= text_field_tag( :piece_location, '', placeholder: "ex: a4", size: 5 ) %></br>
@@ -33,7 +35,7 @@
     <%= label_tag(:king_side_castle, "King side castle") %>
     <%= submit_tag( "Submit Move" ) %>
   <% end %>
-  <% else %>
+<% else %>
   <p>Waiting for your opponent to move.</p>
 <% end %>
 

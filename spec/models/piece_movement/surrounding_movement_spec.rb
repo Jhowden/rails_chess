@@ -1,11 +1,12 @@
 require "rails_helper"
 
 describe PieceMovement::SurroundingMovement do
-  subject { Board.new( Array.new( 8 ) { |cell| Array.new( 8 ) } ).extend( described_class, MoveValidations::Validations ) }
+  let( :board ) { double( "board", chess_board: Array.new( 8 ) { |cell| Array.new( 8 ) } ) }
+  let( :piece ) { double( "piece", team: :white, board: board ) }
+  let( :opposing_piece ) { double( team: :black ) }
+  let( :friendly_piece ) { double( team: :white ) }
   
-  let(:piece) { double( "piece", team: :white ) }
-  let(:opposing_piece) { double( team: :black ) }
-  let(:friendly_piece) { double( team: :white ) }
+  subject { Board.new( board.chess_board ).extend( described_class, MoveValidations::Validations ) }
   
   describe "#find_surrounding_spaces" do
     it "finds the valid moves for a knight or king" do

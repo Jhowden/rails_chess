@@ -4,10 +4,16 @@ module PieceMovement
       valid_moves = []
       horizontal_counter = counter
       while legal_move?( rank, file + horizontal_counter )
-        if empty_space?( file + horizontal_counter, rank )
-          valid_moves << [convert_to_file_position( file + horizontal_counter ), convert_to_rank_position( rank )]
-        elsif different_team?( file + horizontal_counter, rank, piece )
-          valid_moves << [convert_to_file_position( file + horizontal_counter ), convert_to_rank_position( rank )]
+        if empty_space?( file + horizontal_counter, rank, piece.board )
+          valid_moves << [
+            convert_to_file_position( file + horizontal_counter ), 
+            convert_to_rank_position( rank )
+          ]
+        elsif different_team?( file + horizontal_counter, rank, piece, piece.board )
+          valid_moves << [
+            convert_to_file_position( file + horizontal_counter ), 
+            convert_to_rank_position( rank )
+          ]
           break
         else
           break

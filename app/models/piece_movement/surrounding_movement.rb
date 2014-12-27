@@ -7,8 +7,12 @@ module PieceMovement
         new_rank = rank + rank_mod
         new_file = file + file_mod
         
-        if legal_move?( new_file, new_rank ) && valid_location?( new_file, new_rank, piece )
-          valid_moves << [convert_to_file_position( new_file ), convert_to_rank_position( new_rank )]
+        if legal_move?( new_file, new_rank ) && 
+            valid_location?( new_file, new_rank, piece, piece.board )
+          valid_moves << [
+            convert_to_file_position( new_file ), 
+            convert_to_rank_position( new_rank )
+          ]
         end
       end
 

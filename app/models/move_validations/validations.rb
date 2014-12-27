@@ -4,16 +4,16 @@ module MoveValidations
       check_value?( file_position ) && check_value?( rank_position ) ? true : false
     end
     
-    def empty_space?( file, rank )
-      chess_board[rank][file].nil?
+    def empty_space?( file, rank, board )
+      board.chess_board[rank][file].nil?
     end
     
-    def different_team?( file, rank, piece )
-      chess_board[rank][file].team != piece.team
+    def different_team?( file, rank, piece, board )
+      board.chess_board[rank][file].team != piece.team
     end
     
-    def valid_location?( file, rank, piece )
-      empty_space?( file, rank ) || different_team?( file, rank, piece )
+    def valid_location?( file, rank, piece, board )
+      empty_space?( file, rank, board ) || different_team?( file, rank, piece, board )
     end
     
     private

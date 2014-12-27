@@ -1,9 +1,9 @@
 class Board
   include MoveValidations::Validations
-  include PieceMovement::VerticalMovement, PieceMovement::HorizontalMovement, 
+  include PieceMovement::VerticalMovement, PieceMovement::HorizontalMovement,
     PieceMovement::DiagonalMovement, PieceMovement::SurroundingMovement
-  # include PawnBoardMoves
-  #
+  include PieceMovement::PawnMovement
+  
   MOVEMENT_COUNTERS = [-1, 1]
   TEAM_COLORS = [:white, :black]
   
@@ -15,7 +15,7 @@ class Board
   end
   
   def update_board( piece )
-    file, rank = find_piece_location( piece.position )
+    file, rank = find_piece_location piece.position
     capture_piece( file, rank )
     chess_board[rank][file] = piece
   end
@@ -30,12 +30,12 @@ class Board
   end
   
   def find_piece_on_board( piece_position )
-    piece = find_piece( piece_position )
+    piece = find_piece piece_position
     piece || NullObject::NullPiece.new
   end
   
   def remove_old_position( piece_position )
-    file, rank = find_piece_location( piece_position )
+    file, rank = find_piece_location piece_position
     chess_board[rank][file] = nil
   end
   
@@ -83,7 +83,8 @@ class Board
     MOVEMENT_COUNTERS.each do |vertical_space|
       MOVEMENT_COUNTERS.each do |horizontal_space|
         possible_moves.concat( 
-          find_possible_diagonally_spaces( file, rank, piece, vertical_space, horizontal_space )
+          find_possible_diagonally_spaces( file, rank, piece, 
+            vertical_space, horizontal_space )
         )
       end
     end
@@ -96,7 +97,8 @@ class Board
     
     file,rank = find_piece_location piece.position
     
-    find_surrounding_spaces( file, rank, piece, GamePieces::Knight::KNIGHT_SPACE_MODIFIERS )
+    find_surrounding_spaces( file, rank, 
+      piece, GamePieces::Knight::KNIGHT_SPACE_MODIFIERS )
   end
   
   def find_king_spaces( piece )
@@ -104,7 +106,8 @@ class Board
     
     file,rank = find_piece_location piece.position
     
-    find_surrounding_spaces( file, rank, piece, GamePieces::King::KING_SPACE_MODIFIERS )
+    find_surrounding_spaces( file, rank, 
+      piece, GamePieces::King::KING_SPACE_MODIFIERS )
   end
   
   private 

@@ -111,7 +111,9 @@ describe Board do
     context "when there are no other pieces in the same column" do
       it "return an array of possible moves" do
         board.find_vertical_spaces( piece )
-        expect( board.possible_moves ).to eq( [["f", 6], ["f", 7], ["f", 8], ["f",4], ["f", 3], ["f", 2], ["f", 1]] )
+        expect( board.possible_moves ).to eq( 
+          [["f", 6], ["f", 7], ["f", 8], ["f",4], ["f", 3], ["f", 2], ["f", 1]]
+        )
       end
     end
     
@@ -128,6 +130,79 @@ describe Board do
         board.chess_board[1][5] = bishop
         board.find_vertical_spaces( piece )
         expect( board.possible_moves ).to eq( [["f", 6], ["f",4], ["f", 3], ["f", 2], ["f", 1]] )
+      end
+    end
+  end
+  
+  describe "#find_horizontal_spaces" do
+    context "when there are no other pieces in the same row" do
+      it "returns an array of possible moves" do
+        board.find_horizontal_spaces( piece )
+        expect( board.possible_moves ).to eq( 
+          [["e", 5], ["d", 5], ["c", 5], ["b", 5], ["a", 5], ["g", 5], ["h", 5]]
+        )
+      end
+    end
+    
+    context "when there is an enemy in the same row" do
+      it "returns an array of possible moves with enemy space included and not any others past it" do
+        board.chess_board[3][2] = piece2
+        board.find_horizontal_spaces( piece )
+        expect( board.possible_moves ).to eq( [["e", 5], ["d", 5], ["c", 5], ["g", 5], ["h", 5]] )
+        end
+    end
+
+    context "when there is a friendly piece in the same row" do
+      it "returns an array not including that space or any more after it" do
+        board.chess_board[3][2] = bishop
+        board.find_horizontal_spaces( piece )
+        expect( board.possible_moves ).to eq( [["e", 5], ["d", 5], ["g", 5], ["h", 5]] )
+      end
+    end
+  end
+  
+  describe "#find_diagonal_spaces" do
+    context "when there are no other pieces diagonally" do
+      it "returns an array of possible moves" do
+        board.find_diagonal_spaces( piece )
+        expect( board.possible_moves ).to eq( 
+          [
+            ["e", 6], ["d", 7], ["c", 8],
+            ["g", 6], ["h", 7],
+            ["e", 4], ["d", 3], ["c", 2], ["b", 1],
+            ["g", 4], ["h", 3]
+          ] 
+        )
+      end
+    end
+    
+    context "when there is an enemy in a diagonal space" do
+      it "returns an array of possible moves with that space included but not any others past it" do
+        board.chess_board[4][6] = piece2
+        board.chess_board[2][4] = piece2
+        board.find_diagonal_spaces( piece )
+        expect( board.possible_moves ).to eq(
+          [
+            ["e", 6],
+            ["g", 6], ["h", 7],
+            ["e", 4], ["d", 3], ["c", 2], ["b", 1],
+            ["g", 4]
+          ]
+        )
+      end
+    end
+
+    context "when there is a friendly piece in the same diagonal space" do
+      it "returns an array not including that sapce or any more after it" do
+        board.chess_board[4][6] = bishop
+        board.chess_board[2][4] = bishop
+        board.chess_board[4][4] = bishop
+        board.find_diagonal_spaces( piece )
+        expect( board.possible_moves ).to eq(
+        [
+          ["g", 6], ["h", 7],
+        ]
+        )
       end
     end
   end

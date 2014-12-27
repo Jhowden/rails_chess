@@ -1,7 +1,6 @@
 class Board
-  # include MoveMultipleSpaces
   include MoveValidations::Validations
-  include PieceMovement::VerticalMovement
+  include PieceMovement::VerticalMovement, PieceMovement::HorizontalMovement, PieceMovement::DiagonalMovement
   # include PawnBoardMoves
   #
   MOVEMENT_COUNTERS = [-1, 1]
@@ -52,10 +51,40 @@ class Board
     
     file,rank = find_piece_location piece.position
 
-    MOVEMENT_COUNTERS.each do |vertical_space|
+    MOVEMENT_COUNTERS.each do |vertical_counter|
       possible_moves.concat( 
-        find_possible_vertical_spaces( file, rank, piece, vertical_space ) 
+        find_possible_vertical_spaces( file, rank, piece, vertical_counter ) 
       )
+    end
+
+    possible_moves
+  end
+  
+  def find_horizontal_spaces( piece )
+    clear_possible_moves!
+    
+    file,rank = find_piece_location piece.position
+
+    MOVEMENT_COUNTERS.each do |horizontal_space|
+      possible_moves.concat(
+        find_possible_horizontal_spaces( file, rank, piece, horizontal_space )
+      )
+    end
+
+    possible_moves
+  end
+  
+  def find_diagonal_spaces( piece )
+    clear_possible_moves!
+    
+    file,rank = find_piece_location piece.position
+
+    MOVEMENT_COUNTERS.each do |vertical_space|
+      MOVEMENT_COUNTERS.each do |horizontal_space|
+        possible_moves.concat( 
+          find_possible_diagonally_spaces( file, rank, piece, vertical_space, horizontal_space )
+        )
+      end
     end
 
     possible_moves

@@ -86,4 +86,49 @@ describe Board do
       end
     end
   end
+  
+  describe "#remove_old_position" do
+    it "removes a pieces marker" do
+      board.chess_board[3][5] = piece
+      board.remove_old_position( Position.new( "f", 5 ) )
+      expect( board.chess_board[3][5] ).to be_nil
+    end
+  end
+  
+  describe "#convert_to_file_position" do
+    it "converts an index into a file position" do
+      expect( board.convert_to_file_position( 0 ) ).to eq( "a" )
+    end
+  end
+  
+  describe "#convert_to_rank_position" do
+    it "converts an index into a rank position" do
+      expect( board.convert_to_rank_position( 5 ) ).to eq( 3 )
+    end
+  end
+  
+  describe "#find_vertical_spaces" do
+    context "when there are no other pieces in the same column" do
+      it "return an array of possible moves" do
+        board.find_vertical_spaces( piece )
+        expect( board.possible_moves ).to eq( [["f", 6], ["f", 7], ["f", 8], ["f",4], ["f", 3], ["f", 2], ["f", 1]] )
+      end
+    end
+    
+    context "when there is an enemy in the same column" do
+      it "returns an array of possible moves with that space included and not any others past it" do
+        board.chess_board[2][5] = piece2
+        board.find_vertical_spaces( piece )
+        expect( board.possible_moves ).to eq( [["f", 6], ["f",4], ["f", 3], ["f", 2], ["f", 1]] )
+      end
+    end
+
+    context "when there is a friendly piece in the same row" do
+      it "returns an array not including that space or any more after it" do
+        board.chess_board[1][5] = bishop
+        board.find_vertical_spaces( piece )
+        expect( board.possible_moves ).to eq( [["f", 6], ["f",4], ["f", 3], ["f", 2], ["f", 1]] )
+      end
+    end
+  end
 end

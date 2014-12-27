@@ -12,6 +12,7 @@ describe Board do
     "orientation" => :up, "capture_through_en_passant" => true, "captured" => false } ) }
   let( :king ) { GamePieces::King.new( { "file" => "a", "rank" => 7, "team" => :white,
     "captured" => false, "checkmate" => false } ) }
+  let( :knight ) { GamePieces::Knight.new( { "file" => "d", "rank" => 5, "team" => :black, "captured" => false } ) }
   let( :pieces ) { [rook, pawn, bishop, king] }
   
   before :each do
@@ -193,16 +194,93 @@ describe Board do
     end
 
     context "when there is a friendly piece in the same diagonal space" do
-      it "returns an array not including that sapce or any more after it" do
+      it "returns an array excluding that space or any more after it" do
         board.chess_board[4][6] = bishop
         board.chess_board[2][4] = bishop
         board.chess_board[4][4] = bishop
         board.find_diagonal_spaces( piece )
         expect( board.possible_moves ).to eq(
-        [
-          ["g", 6], ["h", 7],
-        ]
+          [["g", 6], ["h", 7]]
         )
+      end
+    end
+    
+    describe "#find_knight_spaces" do
+      context "when there are no surrounding pieces" do
+        it "returns an array of all possible moves" do
+          expect( board.find_knight_spaces( knight ) ).to eq(
+            [
+              ["c", 7], ["b", 6],
+              ["e", 7], ["f", 6],
+              ["c", 3], ["b", 4],
+              ["e", 3], ["f", 4]
+            ]
+          )
+        end
+      end
+
+      context "when there are surrounding enemy pieces" do
+        it "returns an array of possibles moves with those space included" do
+          board.chess_board[1][4] = piece2
+          board.chess_board[4][1] = piece2
+          expect( board.find_knight_spaces( knight ) ).to eq(
+            [
+              ["c", 7], ["b", 6],
+              ["e", 7], ["f", 6],
+              ["c", 3], ["b", 4],
+              ["e", 3], ["f", 4]
+            ]
+          )
+        end
+      end
+
+      context "when there are surrounding friendly pieces" do
+        it "returns an array not including that space" do
+          board.chess_board[1][4] = bishop
+          board.chess_board[4][1] = bishop
+          expect( board.find_knight_spaces( knight ) ).to eq(
+            [
+              ["c", 7], ["b", 6],
+              ["f", 6],
+              ["c", 3],
+              ["e", 3], ["f", 4]
+            ]
+          )
+        end
+      end
+    end
+  
+    describe "#find_king_spaces" do
+      context "when there are no surrounding pieces" do
+        it "returns an array of all possible moves" do
+          expect( board.find_king_spaces( king ) ).to eq(
+            [
+              ["a", 8], ["b", 8], ["b", 7], ["b", 6], ["a", 6]
+            ]
+          )
+        end
+      end
+
+      context "when there are surrounding enemy pieces" do
+        it "returns an array of possible moves with those spaces included" do
+          board.chess_board[0][0] = bishop
+          expect( board.find_king_spaces( king ) ).to eq(
+            [
+              ["a", 8], ["b", 8], ["b", 7], ["b", 6], ["a", 6]
+            ]
+          )
+        end
+      end
+ 
+      context "when there are surrounding enemy pieces" do
+        it "returns an array of possible moves not including those spaces" do
+          board.chess_board[0][0] = piece2
+          expect( board.find_king_spaces( king ) ).to eq(
+            [
+              ["b", 8], ["b", 7], ["b", 6], ["a", 6]
+            ]
+          )
+        end
       end
     end
   end

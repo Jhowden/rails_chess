@@ -1,6 +1,7 @@
 class Board
   include MoveValidations::Validations
-  include PieceMovement::VerticalMovement, PieceMovement::HorizontalMovement, PieceMovement::DiagonalMovement
+  include PieceMovement::VerticalMovement, PieceMovement::HorizontalMovement, 
+    PieceMovement::DiagonalMovement, PieceMovement::SurroundingMovement
   # include PawnBoardMoves
   #
   MOVEMENT_COUNTERS = [-1, 1]
@@ -88,6 +89,22 @@ class Board
     end
 
     possible_moves
+  end
+  
+  def find_knight_spaces( piece )
+    clear_possible_moves!
+    
+    file,rank = find_piece_location piece.position
+    
+    find_surrounding_spaces( file, rank, piece, GamePieces::Knight::KNIGHT_SPACE_MODIFIERS )
+  end
+  
+  def find_king_spaces( piece )
+    clear_possible_moves!
+    
+    file,rank = find_piece_location piece.position
+    
+    find_surrounding_spaces( file, rank, piece, GamePieces::King::KING_SPACE_MODIFIERS )
   end
   
   private 

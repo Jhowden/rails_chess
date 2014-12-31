@@ -12,7 +12,7 @@ describe BoardJsonParser do
     [nil, {"klass" => "GamePieces::Bishop", "attributes" => {"file" => "b", "rank" => 1, "team" => "black", "captured" => false, "move_counter" => 0}}, nil, nil, nil, nil, nil, nil]]
   end
   
-  describe ".translate_json_board" do
+  describe ".parse_json_board" do
     before :each do
       allow( JSON ).to receive( :parse ).and_return transformed_board
       
@@ -25,14 +25,14 @@ describe BoardJsonParser do
     end
     
     it "parses the JSON board" do
-      described_class.translate_json_board( @json_board )
+      described_class.parse_json_board( @json_board )
       
       expect( JSON ).to have_received( :parse ).with( @json_board )
     end
     
     it "places a new instance of a Rook" do
-      recreated_board = described_class.translate_json_board( @json_board )
-      expect(  GamePieces::Rook ).to have_received( :new ).with(
+      recreated_board = described_class.parse_json_board( @json_board )
+      expect( GamePieces::Rook ).to have_received( :new ).with(
         { 
           "file" => "a", 
           "rank" => 8, 
@@ -44,8 +44,8 @@ describe BoardJsonParser do
     end
     
     it "places a new instance of a King" do
-      recreated_board = described_class.translate_json_board( @json_board )
-      expect(  GamePieces::King ).to have_received( :new ).with(
+      recreated_board = described_class.parse_json_board( @json_board )
+      expect( GamePieces::King ).to have_received( :new ).with(
         { 
           "file" => "a", 
           "rank" => 7, 
@@ -58,8 +58,8 @@ describe BoardJsonParser do
     end
         
     it "places a new instance of a Pawn" do
-      recreated_board = described_class.translate_json_board( @json_board )
-      expect(  GamePieces::Pawn ).to have_received( :new ).with(
+      recreated_board = described_class.parse_json_board( @json_board )
+      expect( GamePieces::Pawn ).to have_received( :new ).with(
         { 
           "file" => "b" , 
           "rank" => 2, 
@@ -73,8 +73,8 @@ describe BoardJsonParser do
     end
     
     it "places a new instance of a Bishop" do
-      recreated_board = described_class.translate_json_board( @json_board )
-      expect(  GamePieces::Bishop ).to have_received( :new ).with(
+      recreated_board = described_class.parse_json_board( @json_board )
+      expect( GamePieces::Bishop ).to have_received( :new ).with(
         {
           "file" => "b", 
           "rank" => 1, 

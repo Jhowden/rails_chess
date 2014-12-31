@@ -11,7 +11,7 @@ describe GamesController do
     allow( game ).to receive( :board ).and_return( json_board )
     
     stub_const( "BoardJsonParser", Class.new )
-    allow( BoardJsonParser ).to receive( :translate_json_board )
+    allow( BoardJsonParser ).to receive( :parse_json_board )
     
     stub_const( "PlayGame", Class.new )
     allow( PlayGame ).to receive( :new ).and_return new_game
@@ -28,7 +28,7 @@ describe GamesController do
     it "parses the JSON board" do
       get :home, game_id: 2
       
-      expect( BoardJsonParser ).to have_received( :translate_json_board ).
+      expect( BoardJsonParser ).to have_received( :parse_json_board ).
         with json_board
     end
     

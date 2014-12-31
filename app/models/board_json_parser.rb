@@ -1,11 +1,11 @@
 class BoardJsonParser
-  def self.translate_json_board( json_board )
+  def self.parse_json_board json_board
     set_pieces_on_board( JSON.parse( json_board ) )
   end
   
   private
   
-  def self.set_pieces_on_board( json_board )
+  def self.set_pieces_on_board json_board
     dup_board = json_board.dup
     dup_board.each do |rank|
       rank.map! do |file|

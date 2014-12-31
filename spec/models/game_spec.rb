@@ -24,4 +24,24 @@ describe Game, :type => :model do
     invalid_game = FactoryGirl.build( :game, player_turn: nil )
     expect( invalid_game ).to be_invalid
   end
+  
+  describe ".determine_players_status" do
+    it "returns hash with the enemy players' id and team when current player is white team" do
+      expect( described_class.determine_players_status( 3, 4, 3) ).to eq( 
+        {
+          current_player: {id: 3, team: :white},
+          enemy_player: {id: 4, team: :black}
+        } 
+      )
+    end
+    
+    it "returns hash with the players' id and team when current player is black team" do
+      expect( described_class.determine_players_status( 3, 4, 4) ).to eq( 
+        {
+          current_player: {id: 4, team: :black}, 
+          enemy_player: {id: 3, team: :white}
+        }
+      )
+    end
+  end
 end

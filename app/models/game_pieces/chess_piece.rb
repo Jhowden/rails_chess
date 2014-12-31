@@ -1,5 +1,6 @@
 class GamePieces::ChessPiece
-  attr_reader :captured, :position, :board, :team, :possible_moves, :move_counter
+  attr_reader :captured, :position, :team, :possible_moves, :move_counter
+  attr_accessor :board
   
   def initialize( details, options = {"board" => nil, "move_counter" => 0} )
     new_options = options.merge details

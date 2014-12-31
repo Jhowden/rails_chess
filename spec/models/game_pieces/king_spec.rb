@@ -22,8 +22,12 @@ describe GamePieces::King do
   end
   
   describe "check?" do
-    it "determines if the king is in check" do
+    it "returns true when the king is in check" do
       expect( king.check?( [["e", 5], ["d", 4], ["e", 4], ["f", 4]] ) ).to be_truthy
+    end
+    
+    it "returns true when the king is in check" do
+      expect( king.check?( [["e", 5], ["d", 4], ["f", 4]] ) ).to be_falsey
     end
   end
   

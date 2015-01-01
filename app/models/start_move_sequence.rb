@@ -17,11 +17,11 @@ class StartMoveSequence
     
     if GameStart::Check.king_in_check?( players_information.current_player_king,
       players_information.enemy_player_pieces )
-      posible_escape_moves = GameStart::Checkmate.new( players_information.json_board )
-        .find_checkmate_escape_moves( 
-          players_information.current_player_king,
-          players_information.current_player_pieces,
-          players_information.enemy_player_pieces )
+      posible_escape_moves = GameStart::Checkmate.new( 
+        players_information.json_board,
+        players_information.current_player_king,
+        players_information.current_player_pieces,
+        players_information.enemy_player_pieces ).find_checkmate_escape_moves
 
       # pass possible escape moves list, player, and enemy player into MoveSequence
     end

@@ -21,7 +21,7 @@ describe GameStart::PlayersInformation do
       }
   end
   let( :json_board ) { JSON.generate chess_board }
-  let( :players ) { described_class.new( status_map, json_board) }
+  let( :players ) { described_class.new( status_map, json_board ) }
   
   it "finds a player's pieces" do
     piece = players.enemy_player_pieces.first
@@ -34,20 +34,22 @@ describe GameStart::PlayersInformation do
     expect( piece.move_counter ).to eq 0
     expect( piece.team ).to eq :black
     expect( piece.board ).to be_instance_of Board
+    expect( piece.board.chess_board[0][0] ).to be_instance_of GamePieces::Rook
   end
   
   it "does not find a player's piece that has been captured" do
     expect( players.enemy_player_pieces.any? { |piece| piece.class == GamePieces::Bishop } ).to be_falsey
   end
-  
+
   it "find a player's king" do
     king = players.current_player_king
     expect( king ).to be_instance_of GamePieces::King
     expect( king.position.file ).to eq "a"
     expect( king.position.rank ).to eq 7
-    expect( king.team ).to eq :white  
-    expect( king.captured ).to eq false  
-    expect( king.move_counter ).to eq 0  
+    expect( king.team ).to eq :white
+    expect( king.captured ).to eq false
+    expect( king.move_counter ).to eq 0
     expect( king.board ).to be_instance_of Board
+    expect( king.board.chess_board[0][0] ).to be_instance_of GamePieces::Rook
   end
 end

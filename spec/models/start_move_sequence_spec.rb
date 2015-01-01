@@ -64,16 +64,16 @@ describe StartMoveSequence do
     it "instantiates a new Checkmate object" do
       start_move_sequence.start
       
-      expect( GameStart::Checkmate ).to have_received( :new ).with( players_info.json_board )
+      expect( GameStart::Checkmate ).to have_received( :new ).
+        with( players_info.json_board, players_info.current_player_king, 
+          players_info.current_player_pieces, 
+          players_info.enemy_player_pieces )
     end
     
     it "starts the player_in_check sequence when player is in check" do
       start_move_sequence.start
       
-      expect( checkmate ).to have_received( :find_checkmate_escape_moves ).
-        with( players_info.current_player_king, 
-          players_info.current_player_pieces, 
-          players_info.enemy_player_pieces )
+      expect( checkmate ).to have_received( :find_checkmate_escape_moves ).with( no_args )
     end
   end
 end

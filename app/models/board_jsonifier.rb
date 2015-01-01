@@ -8,41 +8,47 @@ class BoardJsonifier
   
   def self.transform_board board
     dup_board = board.dup
-    dup_board.each do |rank|
-      rank.map! do |file|
-        transform_file file unless file.nil?
+    dup_board.each do |row|
+      row.map! do |location|
+        transform_location location unless location.nil?
       end
     end
   end
   
-  def self.transform_file file
-    if file.respond_to? :checkmate
-      { "klass"        => file.class.to_s,
+  def self.transform_location location
+    if location.respond_to? :checkmate
+      { "klass"        => location.class.to_s,
         "attributes"   => { 
-        "file"         => file.position.file,
-        "rank"         => file.position.rank,
-        "team"         => file.team,
-        "captured"     => file.captured,
-        "move_counter" => file.move_counter,
-        "checkmate"    => file.checkmate } }
-    elsif file.respond_to? :orientation
-      { "klass"                      => file.class.to_s,
+          "file"         => location.position.file,
+          "rank"         => location.position.rank,
+          "team"         => location.team,
+          "captured"     => location.captured,
+          "move_counter" => location.move_counter,
+          "checkmate"    => location.checkmate
+        } 
+      }
+    elsif location.respond_to? :orientation
+      { "klass"                      => location.class.to_s,
         "attributes"                 => { 
-        "file"                       => file.position.file,
-        "rank"                       => file.position.rank,
-        "team"                       => file.team,
-        "captured"                   => file.captured,
-        "move_counter"               => file.move_counter,
-        "orientation"                => file.orientation,
-        "capture_through_en_passant" => file.capture_through_en_passant } }
+          "file"                       => location.position.file,
+          "rank"                       => location.position.rank,
+          "team"                       => location.team,
+          "captured"                   => location.captured,
+          "move_counter"               => location.move_counter,
+          "orientation"                => location.orientation,
+          "capture_through_en_passant" => location.capture_through_en_passant
+        } 
+      }
     else
-      { "klass"        => file.class.to_s,
+      { "klass"        => location.class.to_s,
         "attributes"   => { 
-        "file"         => file.position.file,
-        "rank"         => file.position.rank,
-        "team"         => file.team,
-        "captured"     => file.captured,
-        "move_counter" => file.move_counter } }
+          "file"         => location.position.file,
+          "rank"         => location.position.rank,
+          "team"         => location.team,
+          "captured"     => location.captured,
+          "move_counter" => location.move_counter
+        } 
+      }
     end
   end
 end

@@ -1,3 +1,8 @@
+require "find_pieces/find_team_pieces"
+require "game_start/players_information"
+require "game_start/checkmate"
+require "game_start/check"
+
 class StartMoveSequence
   
   def initialize( observer, input_type, game_id )
@@ -15,13 +20,12 @@ class StartMoveSequence
       ), @game.board
     )
     
-    if GameStart::Check.king_in_check?( players_information.current_player_king,
-      players_information.enemy_player_pieces )
+    if king_in_check? players_information
       posible_escape_moves = GameStart::Checkmate.new( 
         players_information.json_board,
-        players_information.current_player_king,
-        players_information.current_player_pieces,
-        players_information.enemy_player_pieces ).find_checkmate_escape_moves
+        players_information.current_player_team,
+        players_information.enemy_player_team 
+      ).find_checkmate_escape_moves
 
       # pass possible escape moves list, player, and enemy player into MoveSequence
     end
@@ -35,5 +39,20 @@ class StartMoveSequence
     # update en_passant status of pawns
     # check to see if other player's king is in check, display flash message
     # check to see if there is checkmate after move
+  end
+  
+  private
+  
+  def king_in_check? players_information
+    GameStart::Check.king_in_check?( 
+      FindPieces::FindTeamPieces.
+        find_king_piece( 
+          players_information.current_player_team, 
+          players_information.json_board ),
+      FindPieces::FindTeamPieces.
+        find_pieces( 
+        players_information.enemy_player_team, 
+        players_information.json_board ) 
+    )
   end
 end

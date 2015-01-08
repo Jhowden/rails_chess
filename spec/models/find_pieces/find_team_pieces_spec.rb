@@ -1,4 +1,5 @@
 require "rails_helper"
+require "board_json_parser"
 
 describe FindPieces::FindTeamPieces do
   let( :chess_board ) do
@@ -11,16 +12,17 @@ describe FindPieces::FindTeamPieces do
     [nil, {"klass" => "GamePieces::Pawn", "attributes" => {"file" => "b" , "rank" => 2, "team" => "black", "captured" => false, "move_counter" => 0, "orientation" => "up",  "capture_through_en_passant" => true}}, nil, nil, nil, nil, nil, nil], 
     [nil, {"klass" => "GamePieces::Bishop", "attributes" => {"file" => "b", "rank" => 1, "team" => "black", "captured" => true, "move_counter" => 0}}, nil, nil, nil, nil, nil, nil]]
   end
-  let( :json_board ) { JSON.generate chess_board }
+  let( :board ) { Board.new( 
+    BoardJsonParser.parse_json_board( JSON.generate chess_board ) ) }
   
   describe ".find_pieces" do
     it "only returns the pieces that have NOT been captured" do
       expect( described_class.
-        find_pieces( :black, json_board ).size ).to eq 1
+        find_pieces( :black, board ).size ).to eq 1
     end
     
     it "finds a teams pieces by color" do
-      piece = described_class.find_pieces( :black, json_board ).first
+      piece = described_class.find_pieces( :black, board ).first
       expect( piece ).to be_instance_of GamePieces::Pawn
       expect( piece.orientation ).to eq :up
       expect( piece.capture_through_en_passant ).to eq true
@@ -32,11 +34,23 @@ describe FindPieces::FindTeamPieces do
       expect( piece.board ).to be_instance_of Board
       expect( piece.board.chess_board[0][0] ).to be_instance_of GamePieces::Rook
     end
+    
+    it "finds a teams pieces by color" do
+      piece = described_class.find_pieces( :white, board ).first
+      expect( piece ).to be_instance_of GamePieces::Rook
+      expect( piece.position.rank ).to eq 8
+      expect( piece.position.file ).to eq "a"
+      expect( piece.captured ).to eq false
+      expect( piece.move_counter ).to eq 0
+      expect( piece.team ).to eq :white
+      expect( piece.board ).to be_instance_of Board
+      expect( piece.board.chess_board[0][0] ).to be_instance_of GamePieces::Rook
+    end
   end
   
   describe ".find_king_piece" do
     it "finds the king piece" do
-      king = described_class.find_king_piece( :white, json_board )
+      king = described_class.find_king_piece( :white, board )
       expect( king ).to be_instance_of GamePieces::King
       expect( king.position.file ).to eq "a"
       expect( king.position.rank ).to eq 7

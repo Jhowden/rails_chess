@@ -4,10 +4,10 @@ describe StartMoveSequence do
   let( :game ) { stub_model Game }
   let( :king ) { double( "king" ) }
   let( :pieces ) { double( "pieces" ) }
-  let( :players_info ) { double( "players", current_player_king: king, 
-    enemy_player_pieces: pieces,
-    current_player_pieces: pieces,
-    json_board: []) }
+  let( :players_info ) { double( "players", 
+    current_player_team: :white, 
+    enemy_player_team: :black,
+    json_board: "[]" ) }
   let( :player1 ) { stub_model User }
   let( :player2 ) { stub_model User }
   let( :input ) do
@@ -18,8 +18,9 @@ describe StartMoveSequence do
   end
   let( :observer ) { double( "observer" ) }
   let( :input_type ) { double( "input_type", input: input ) }
+   let( :checkmate ) { double( "checkmate" ) }
+   
   let( :start_move_sequence ) { described_class.new( observer, input_type, 3 ) }
-  let( :checkmate ) { double( "checkmate" ) }
   
   before :each do
     allow( Game ).to receive( :find ).and_return game
@@ -38,6 +39,10 @@ describe StartMoveSequence do
     stub_const( "GameStart::Checkmate", Class.new )
     allow( GameStart::Checkmate ).to receive( :new ).and_return checkmate
     allow( checkmate ).to receive( :find_checkmate_escape_moves )
+    
+    stub_const( "FindPieces::FindTeamPieces", Class.new )
+    allow( FindPieces::FindTeamPieces ).to receive( :find_pieces ).and_return pieces
+    allow( FindPieces::FindTeamPieces ).to receive( :find_king_piece ).and_return king
   end
   
   describe "#start" do
@@ -58,16 +63,15 @@ describe StartMoveSequence do
       start_move_sequence.start
       
       expect( GameStart::Check ).to have_received( :king_in_check? ).
-        with( players_info.current_player_king, players_info.enemy_player_pieces )
+        with( king, pieces )
     end
     
     it "instantiates a new Checkmate object" do
       start_move_sequence.start
       
       expect( GameStart::Checkmate ).to have_received( :new ).
-        with( players_info.json_board, players_info.current_player_king, 
-          players_info.current_player_pieces, 
-          players_info.enemy_player_pieces )
+        with( players_info.json_board, players_info.current_player_team, 
+          players_info.enemy_player_team )
     end
     
     it "starts the player_in_check sequence when player is in check" do

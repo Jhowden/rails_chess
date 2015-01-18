@@ -6,27 +6,30 @@ module CheckmateMoves
   class KingEscapeMoves
     extend TryMove
 
-    def self.find_moves( json_board, current_player_team, enemy_player_team )
+    def self.find_moves( json_board, player_team, enemy_team )
       board = Board.new( BoardJsonParser.parse_json_board( json_board ) )
-      king = find_king( current_player_team, board )
+      king = find_king( player_team, board )
       
       king.determine_possible_moves.map { |move|
-        new_board = Board.new( BoardJsonParser.parse_json_board( json_board ) )
-        if out_of_check?( find_king( current_player_team, new_board ), 
-          new_board, move, find_enemy_pieces( enemy_player_team, new_board ) )
-          [king.position.file, king.position.rank ].concat move
+        position = Position.new( move.first, move.last )
+        testing_board = Board.new( BoardJsonParser.
+          parse_json_board( json_board ) )
+        if out_of_check?( find_king( player_team, testing_board ), 
+          testing_board, position, find_team_pieces( enemy_team, testing_board ) )
+          [king.position.file, king.position.rank ].
+            concat( [position.file, position.rank] )
         end
       }.compact
     end
     
     private
     
-    def self.find_king( current_player_team, board )
-      FindPieces::FindTeamPieces.find_king_piece( current_player_team, board )
+    def self.find_king( player_team, board )
+      FindPieces::FindTeamPieces.find_king_piece( player_team, board )
     end
     
-    def self.find_enemy_pieces( enemy_player_team, board )
-      FindPieces::FindTeamPieces.find_pieces( enemy_player_team, board )
+    def self.find_team_pieces( enemy_team, board )
+      FindPieces::FindTeamPieces.find_pieces( enemy_team, board )
     end
   end
 end

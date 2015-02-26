@@ -20,7 +20,7 @@ module GameStart
           find_moves( json_board, current_player_team, enemy_player_team ) )
       possible_moves.concat( CheckmateMoves::BlockPieceMoves.
         find_moves( json_board, current_player_team, enemy_player_team ) )
-      possible_moves
+      possible_moves.uniq.map{ |move| move.map( &:to_s ).join }
     end
   end
 end

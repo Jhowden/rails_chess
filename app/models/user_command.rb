@@ -12,7 +12,7 @@ class UserCommand
     @piece_location    = input_map.fetch( "piece_location" )
     @target_location   = input_map.fetch( "target_location" )
     @en_passant        = input_map.fetch( "en_passant", nil )
-    @castle_input      = input_map.fetch( "castle", nil)
+    @castle_input      = input_map.fetch( "castle", nil )
   end
   
   def valid_input?

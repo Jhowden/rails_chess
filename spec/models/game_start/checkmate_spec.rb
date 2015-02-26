@@ -16,7 +16,7 @@ describe GameStart::Checkmate do
   let( :block_piece_moves ) do
     [
       ["g", 5, "b", 7],
-      ["d", 7, "b", 8]
+      ["d", 7, "b", 7]
     ]
   end
   let( :checkmate ) { described_class.new( json_board, :black, :white ) }
@@ -58,11 +58,10 @@ describe GameStart::Checkmate do
       it "returns the correct moves" do
         expect( checkmate.find_checkmate_escape_moves ).to eq(
           [
-            ["b", 8, "a", 8],
-            ["b", 8, "b", 7],
-            ["d", 7, "b", 7],
-            ["g", 5, "b", 7],
-            ["d", 7, "b", 8]
+            "b8a8",
+            "b8b7",
+            "d7b7",
+            "g5b7",
           ]
         )
       end

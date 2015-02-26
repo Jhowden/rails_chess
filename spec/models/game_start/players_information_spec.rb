@@ -23,7 +23,7 @@ describe GameStart::PlayersInformation do
   let( :players_info ) { described_class.new( status_map, json_board ) }
   
   it "finds the current player and enemy player's team color" do
-    expect( players_info.current_player_team ).to eq :white
-    expect( players_info.enemy_player_team ).to eq :black
+    expect( players_info.current_team ).to eq :white
+    expect( players_info.enemy_team ).to eq :black
   end
 end

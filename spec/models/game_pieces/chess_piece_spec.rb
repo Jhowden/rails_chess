@@ -53,7 +53,8 @@ describe GamePieces::ChessPiece do
   
   describe "#update_piece_position" do
     it "updates the position of the piece" do
-      piece.update_piece_position( "e", 5 )
+      position = Position.new( "e", 5 )
+      piece.update_piece_position position 
       expect( piece.position.file ).to eq( "e" )
       expect( piece.position.rank ).to eq( 5 )
     end

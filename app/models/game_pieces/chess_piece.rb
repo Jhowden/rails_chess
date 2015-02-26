@@ -20,8 +20,8 @@ class GamePieces::ChessPiece
     captured
   end
   
-  def update_piece_position( file, rank )
-    position.update_position( file, rank )
+  def update_piece_position( new_position )
+    position.update_position( new_position.file, new_position.rank )
   end
 
   def clear_moves!

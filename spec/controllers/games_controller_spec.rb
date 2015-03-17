@@ -81,4 +81,11 @@ describe GamesController do
       expect( flash[:error] ).to match /invalid/
     end
   end
+  
+  describe "#on_successful_move" do
+    it "sets a successful flash message" do
+      controller.on_successful_move "Successful move: b4c5"
+      expect( flash[:notice] ).to match /Successful/
+    end
+  end
 end

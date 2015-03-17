@@ -3,6 +3,7 @@ require "game_start/players_information"
 require "game_start/checkmate"
 require "game_start/check"
 require "move_sequence/standard_king_in_check_sequence"
+require "board_jsonifier"
 
 class StartMoveSequence
   attr_reader :observer, :game, :input
@@ -34,15 +35,17 @@ class StartMoveSequence
 
       case input
       when ParsedInput::Standard
-        MoveSequence::StandardKingInCheckSequence.new( possible_escape_moves,
-          input, players_info, observer, game ).valid_move?
+        move_seq = MoveSequence::StandardKingInCheckSequence.new( 
+          possible_escape_moves, input, players_info, observer, game )
+        if move_seq.valid_move?
+          board, response_message = move_seq.response
+          game.update_attributes( board: BoardJsonifier.jsonify_board( board.chess_board ), 
+            player_turn: players_info.enemy_team )
+          observer.on_successful_move( response_message )
+        end
       end
-      # pass possible escape moves list, player, and enemy player into MoveSequence
     end
     
-    # check to see if piece selected is same team as current player
-    # parse the input properly
-    # check to see that the move can happen (doesn't put current player's king in check)
     # increase move counter for piece
     # update en_passant status of pawns
     # check to see if other player's king is in check, display flash message

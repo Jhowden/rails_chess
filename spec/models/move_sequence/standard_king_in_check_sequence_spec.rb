@@ -17,7 +17,6 @@ describe MoveSequence::StandardKingInCheckSequence do
         }
       }
   end
-  let( :game ) { stub_model Game }
   let( :player_info ) { double( "player_info", current_team: :black,
     enemy_team: :white, json_board: JSON.generate( json_board ) ) }
   let( :input_type ) { ParsedInput::Standard.new input_map }
@@ -31,7 +30,7 @@ describe MoveSequence::StandardKingInCheckSequence do
     [nil, nil, nil, nil, nil, nil, nil, nil],
     [nil, nil, nil, nil, nil, nil, nil, nil]]
   end
-  let( :new_json_board ) do
+  let( :ending_json_board ) do
     JSON.generate( [
       [nil, nil, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"c", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, nil, nil, nil, nil, nil],
       [nil, nil, nil, nil, nil, nil, nil, nil],
@@ -43,14 +42,11 @@ describe MoveSequence::StandardKingInCheckSequence do
       [nil, nil, nil, nil, nil, nil, nil, nil]
       ] )
   end
-  let( :observer ) { double( "observer" ) }
   let( :parsed_board ) { BoardJsonParser.parse_json_board( player_info.json_board ) }
   let( :game_board ) { Board.new parsed_board }
   let( :check_seq ) { described_class.new( escape_moves, 
     input_type, 
-    player_info,
-    observer,
-    game ) }
+    player_info ) }
   
   describe "#valid_move?" do
     before :each do
@@ -59,25 +55,12 @@ describe MoveSequence::StandardKingInCheckSequence do
       allow( BoardJsonParser ).to receive( :parse_json_board ).and_return parsed_board
       
       allow( Board ).to receive( :new ).and_return game_board
-      allow( game ).to receive( :update_attributes )
       
       allow( FindPieces::FindTeamPieces ).to receive( :find_king_piece )
       allow( FindPieces::FindTeamPieces ).to receive( :find_pieces )
     end
     
     context "when player_input matches escape moves" do
-      it "parses the json board" do
-        check_seq.valid_move?
-      
-        expect( BoardJsonParser ).to have_received( :parse_json_board ).with player_info.json_board
-      end
-      
-      it "instantiates a new board" do
-        check_seq.valid_move?
-        
-        expect( Board ).to have_received( :new ).with parsed_board
-      end
-      
       it "finds the king piece and the enemy pieces" do
         check_seq.valid_move?
         
@@ -107,12 +90,21 @@ describe MoveSequence::StandardKingInCheckSequence do
       let( :escape_moves ) { ["h2b5"]}
       let( :check_seq ) { described_class.new( escape_moves, 
         input_type, 
-        player_info,
-        observer,
-        game ) }
-      it "returns a response" do
+        player_info ) }
+        
+      it "returns a false" do
         expect( check_seq.valid_move? ).to be_falsey
       end
+    end
+  end
+  
+  describe "#response" do
+    it "returns the updated board and message" do
+      check_seq.valid_move?
+      board, message = check_seq.response
+      
+      expect( BoardJsonifier.jsonify_board( board.chess_board ) ).to eq ending_json_board
+      expect( message ).to match /Successful/
     end
   end
 end

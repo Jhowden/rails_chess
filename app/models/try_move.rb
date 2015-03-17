@@ -39,7 +39,7 @@ module TryMove
   private
   
   def update_the_board( piece, board, position, original_position )
-    piece.update_piece_position( position.file, position.rank )
+    piece.update_piece_position( position )
     board.update_board( piece )
     board.remove_old_position( original_position )
   end

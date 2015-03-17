@@ -10,11 +10,12 @@ describe StartMoveSequence do
     json_board: "[]" ) }
   let( :player1 ) { stub_model User }
   let( :player2 ) { stub_model User }
-  let( :observer ) { double( "observer" ) }
+  let( :observer ) { double( "observer", on_successful_move: nil ) }
   let( :input ) { ParsedInput::Standard.new( {} ) }
   let( :checkmate ) { double( "checkmate" ) }
   let( :check_sequence ) { double( "check_sequence" ) }
   let( :escape_moves ) { double( "escape_moves" ) }
+  let( :board ) { double( "board", chess_board: [] ) }
    
   let( :start_move_sequence ) { described_class.new( observer, input, 3 ) }
   
@@ -24,6 +25,7 @@ describe StartMoveSequence do
     allow( game ).to receive( :player_turn ).and_return 5
     allow( game ).to receive( :white_team_id ).and_return 5
     allow( game ).to receive( :black_team_id ).and_return 2
+    allow( game ).to receive( :update_attributes )
     
     stub_const( "GameStart::PlayersInformation", Class.new )
     allow( GameStart::PlayersInformation ).to receive( :new ).
@@ -43,6 +45,7 @@ describe StartMoveSequence do
     stub_const( "MoveSequence::StandardKingInCheckSequence", Class.new )
     allow( MoveSequence::StandardKingInCheckSequence ).to receive( :new ).and_return check_sequence
     allow( check_sequence ).to receive( :valid_move? )
+    allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
   end
   
   describe "#start" do
@@ -97,6 +100,35 @@ describe StartMoveSequence do
         start_move_sequence.start
 
         expect( check_sequence ).to have_received( :valid_move? )
+      end
+      
+      context "when it is a valid move" do
+        before :each do
+          allow( check_sequence ).to receive( :valid_move? ).
+            and_return true
+          allow( BoardJsonifier ).to receive( :jsonify_board ).
+            and_return "[]"
+        end
+        
+        it "calls for the response" do
+          start_move_sequence.start
+          
+          expect( check_sequence ).to have_received( :response )
+        end
+        
+        it "updates the Game" do
+          start_move_sequence.start
+          
+          expect( game ).to have_received( :update_attributes ).
+            with( board: "[]", player_turn: :black )
+        end
+        
+        it "sends the messages to the observer" do
+          start_move_sequence.start
+          
+          expect( observer ).to have_received( :on_successful_move ).
+            with( "Sucessful move: a4b6" )
+        end
       end
     end
   end

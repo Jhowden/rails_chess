@@ -14,6 +14,10 @@ class GamesController < ApplicationController
     flash[:error] = message
   end
   
+  def on_successful_move( message )
+    flash.notice = message
+  end
+  
   private
   
   def find_game

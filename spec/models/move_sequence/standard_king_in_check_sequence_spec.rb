@@ -34,7 +34,7 @@ describe MoveSequence::StandardKingInCheckSequence do
     JSON.generate( [
       [nil, nil, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"c", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, nil, nil, nil, nil, nil],
       [nil, nil, nil, nil, nil, nil, nil, nil],
-      [{"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"a", "rank"=>6, "team"=>:black, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, nil, nil, nil, nil],
+      [{"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"a", "rank"=>6, "team"=>:black, "captured"=>false, "move_counter"=>1}}, nil, nil, nil, nil, nil, nil, nil],
       [nil, nil, nil, nil, nil, nil, nil, nil],
       [nil, nil, nil, nil, nil, nil, nil, nil],
       [nil, nil, nil, nil, nil, nil, nil, nil],
@@ -57,7 +57,7 @@ describe MoveSequence::StandardKingInCheckSequence do
       allow( Board ).to receive( :new ).and_return game_board
       
       allow( FindPieces::FindTeamPieces ).to receive( :find_king_piece )
-      allow( FindPieces::FindTeamPieces ).to receive( :find_pieces )
+      allow( FindPieces::FindTeamPieces ).to receive( :find_pieces ).and_return []
     end
     
     context "when player_input matches escape moves" do
@@ -68,13 +68,20 @@ describe MoveSequence::StandardKingInCheckSequence do
         expect( FindPieces::FindTeamPieces ).to have_received( :find_king_piece ).
           with( :black, game_board )
         expect( FindPieces::FindTeamPieces ).to have_received( :find_pieces ).
-          with( :white, game_board )
+          with( :white, game_board ).at_least( :once )
       end
       
-      context "when it is a valid move" do
-        it "returns true" do
-          expect( check_seq.valid_move? ).to be_truthy
-        end
+      it "returns true" do
+        expect( check_seq.valid_move? ).to be_truthy
+      end
+      
+      it "updates en_passant status for enemy pawn's" do
+        allow( EnPassantCommands ).to receive( :update_enemy_pawn_status_for_en_passant )
+        
+        check_seq.valid_move?
+        
+        expect( EnPassantCommands ).to have_received( :update_enemy_pawn_status_for_en_passant ).
+          with( [], :white )
       end
       
       context "when it is an invalid move" do
@@ -83,6 +90,14 @@ describe MoveSequence::StandardKingInCheckSequence do
           
           expect( check_seq.valid_move? ).to be_falsey
         end
+      end
+    end
+    
+    context "when trying to move piece from wrong team" do
+      it "returns false" do
+        allow( player_info ).to receive( :current_team ).and_return :white
+        
+        expect( check_seq.valid_move? ).to be_falsey
       end
     end
     

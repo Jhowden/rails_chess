@@ -6,31 +6,21 @@ require "move_sequence/standard_king_in_check_sequence"
 require "board_jsonifier"
 
 class StartMoveSequence
-  attr_reader :observer, :game, :input
+  attr_reader :observer, :game, :input, :players_info
+  INVALID_MOVE_MSG = "Invalid move. Please select another move."
+  
   def initialize( observer, input, game_id )
     @observer = observer
     @input = input
     @game = Game.find game_id
+    @players_info = GameStart::PlayersInformation.new(
+      game.determine_players_status, game.board
+    )
   end
   
-  def start
-    players_info = GameStart::PlayersInformation.new( 
-    # this should be an intance method
-      Game.determine_players_status( 
-        game.white_team_id, 
-        game.black_team_id, 
-        game.player_turn
-      ), game.board
-    )
-    
-    # the input argument should containt what type of sequence it needs to perform
-    
+  def start()
     if king_in_check? players_info
-      possible_escape_moves = GameStart::Checkmate.new( 
-        players_info.json_board,
-        players_info.current_team,
-        players_info.enemy_team 
-      ).find_checkmate_escape_moves
+      possible_escape_moves = checkmate.find_checkmate_escape_moves
 
 
       case input
@@ -39,22 +29,36 @@ class StartMoveSequence
           possible_escape_moves, input, players_info, observer, game )
         if move_seq.valid_move?
           board, response_message = move_seq.response
-          game.update_attributes( board: BoardJsonifier.jsonify_board( board.chess_board ), 
+          json_board = BoardJsonifier.jsonify_board( board.chess_board )
+          
+          game.update_attributes( board: json_board, 
             player_turn: players_info.enemy_team )
           observer.on_successful_move( response_message )
+        else
+          observer.on_failed_move( INVALID_MOVE_MSG )
         end
       end
     end
     
-    # increase move counter for piece
-    # update en_passant status of pawns
+    # increase move counter for piece -> do this inside checksequence object
+    # update en_passant status of pawns -> do this inside checksequence object
     # check to see if other player's king is in check, display flash message
+    # create new AR model (Game Moves ) and update record to reflect move
     # check to see if there is checkmate after move
   end
   
   private
   
-  def king_in_check? players_info
+  def checkmate()
+    return @checkmate if @checkmate
+    @checkmate = GameStart::Checkmate.new( 
+        players_info.json_board,
+        players_info.current_team,
+        players_info.enemy_team 
+      )
+  end
+  
+  def king_in_check?( players_info )
     GameStart::Check.king_in_check?( 
       FindPieces::FindTeamPieces.
         find_king_piece( 

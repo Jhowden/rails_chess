@@ -10,7 +10,7 @@ describe StartMoveSequence do
     json_board: "[]" ) }
   let( :player1 ) { stub_model User }
   let( :player2 ) { stub_model User }
-  let( :observer ) { double( "observer", on_successful_move: nil ) }
+  let( :observer ) { double( "observer", on_successful_move: nil, on_failed_move: nil ) }
   let( :input ) { ParsedInput::Standard.new( {} ) }
   let( :checkmate ) { double( "checkmate" ) }
   let( :check_sequence ) { double( "check_sequence" ) }
@@ -44,24 +44,24 @@ describe StartMoveSequence do
     
     stub_const( "MoveSequence::StandardKingInCheckSequence", Class.new )
     allow( MoveSequence::StandardKingInCheckSequence ).to receive( :new ).and_return check_sequence
-    allow( check_sequence ).to receive( :valid_move? )
+    allow( check_sequence ).to receive( :valid_move? ).and_return true
     allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
   end
   
-  describe "#start" do
-    it "instantiates a Players object" do
-      start_move_sequence.start
-      
-      expect( GameStart::PlayersInformation ).to have_received( :new ).with(
-        {
-          current_player:
-          {id: 5, team: :white}, 
-          enemy_player:
-          {id: 2, team: :black}
-          }, game.board
-      )
-    end
+  it "instantiates a Players object" do
+    start_move_sequence
     
+    expect( GameStart::PlayersInformation ).to have_received( :new ).with(
+      {
+        current_player:
+        {id: 5, team: :white}, 
+        enemy_player:
+        {id: 2, team: :black}
+        }, game.board
+    )
+  end
+  
+  describe "#start" do    
     context "when the player is in check" do
       it "checks to see if a player's king is in check" do
         start_move_sequence.start
@@ -75,13 +75,14 @@ describe StartMoveSequence do
       
         expect( GameStart::Checkmate ).to have_received( :new ).
           with( players_info.json_board, players_info.current_team, 
-            players_info.enemy_team )
+            players_info.enemy_team ).at_least( :once )
       end
     
       it "starts the player_in_check sequence when player is in check" do
         start_move_sequence.start
       
-        expect( checkmate ).to have_received( :find_checkmate_escape_moves ).with( no_args )
+        expect( checkmate ).to have_received( :find_checkmate_escape_moves ).
+          with( no_args ).at_least( :once )
       end
     
       it "calls to MoveSequence::StandardKingInCheckSequence" do
@@ -104,8 +105,6 @@ describe StartMoveSequence do
       
       context "when it is a valid move" do
         before :each do
-          allow( check_sequence ).to receive( :valid_move? ).
-            and_return true
           allow( BoardJsonifier ).to receive( :jsonify_board ).
             and_return "[]"
         end
@@ -128,6 +127,25 @@ describe StartMoveSequence do
           
           expect( observer ).to have_received( :on_successful_move ).
             with( "Sucessful move: a4b6" )
+        end
+        
+        xit "checks for checkmate" do
+          start_move_sequence.start
+          
+          expect( checkmate ).to receive( :match_finished? )
+        end
+      end
+      
+      context "when it is not a valid move" do
+        before :each do
+          allow( check_sequence ).to receive( :valid_move? ).and_return false
+        end
+        
+        it "calls off to the observer" do
+          start_move_sequence.start
+          
+          expect( observer ).to have_received( :on_failed_move ).
+            with( "Invalid move. Please select another move." )
         end
       end
     end

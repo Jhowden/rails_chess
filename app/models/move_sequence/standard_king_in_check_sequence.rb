@@ -1,5 +1,6 @@
 require "board_json_parser"
 require "find_pieces/find_team_pieces"
+require "en_passant_commands"
 
 module MoveSequence
   class StandardKingInCheckSequence
@@ -21,6 +22,13 @@ module MoveSequence
         piece.update_piece_position target_position
         board.update_board piece
         board.remove_old_position piece_position
+        piece.increase_move_counter!
+        EnPassantCommands.update_enemy_pawn_status_for_en_passant(
+          FindPieces::FindTeamPieces.
+            find_pieces(
+            players_info.enemy_team,
+            board ),
+          players_info.enemy_team )
         king_in_check?( board )
       end
     end

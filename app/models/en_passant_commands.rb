@@ -2,10 +2,6 @@ require "en_passant/en_passant_orientation_factory"
 require "en_passant/captured_piece_en_passant_team_identifier"
 
 module EnPassantCommands
-  # THESE SHOULD NO LONGER BELONG HERE
-  DOWN_SPACE = -1
-  UP_SPACE = 1
-  
   def self.can_en_passant?( pawn, navigation )
     pawn_en_passant = EnPassant::EnPassantOrientationFactory.for_orientation( pawn )
     pawn_en_passant.check_for_enpassant( navigation )

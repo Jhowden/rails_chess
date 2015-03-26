@@ -31,8 +31,13 @@ class StartMoveSequence
           board, response_message = move_seq.response
           json_board = BoardJsonifier.jsonify_board( board.chess_board )
           
-          game.update_attributes( board: json_board, 
-            player_turn: players_info.enemy_team )
+          if checkmate.match_finished?
+            game.update_attributes( board: json_board, 
+              winner: players_info.current_team )
+          else
+            game.update_attributes( board: json_board, 
+              player_turn: players_info.enemy_team_id )
+          end
           observer.on_successful_move( response_message )
         else
           observer.on_failed_move( INVALID_MOVE_MSG )
@@ -43,7 +48,7 @@ class StartMoveSequence
     # increase move counter for piece -> do this inside checksequence object
     # update en_passant status of pawns -> do this inside checksequence object
     # check to see if other player's king is in check, display flash message
-    # create new AR model (Game Moves ) and update record to reflect move
+    # create new AR model ( Game Moves ) and update record to reflect move
     # check to see if there is checkmate after move
   end
   

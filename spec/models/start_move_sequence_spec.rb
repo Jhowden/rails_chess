@@ -4,15 +4,17 @@ describe StartMoveSequence do
   let( :game ) { stub_model Game }
   let( :king ) { double( "king" ) }
   let( :pieces ) { double( "pieces" ) }
-  let( :players_info ) { double( "players", 
-    current_team: :white, 
+  let( :players_info ) { double( "players_info", 
+    current_team: :white,
+    cuurent_team_id: 2,
     enemy_team: :black,
+    enemy_team_id: 6,
     json_board: "[]" ) }
   let( :player1 ) { stub_model User }
   let( :player2 ) { stub_model User }
   let( :observer ) { double( "observer", on_successful_move: nil, on_failed_move: nil ) }
   let( :input ) { ParsedInput::Standard.new( {} ) }
-  let( :checkmate ) { double( "checkmate" ) }
+  let( :checkmate ) { double( "checkmate", match_finished?: true ) }
   let( :check_sequence ) { double( "check_sequence" ) }
   let( :escape_moves ) { double( "escape_moves" ) }
   let( :board ) { double( "board", chess_board: [] ) }
@@ -115,13 +117,6 @@ describe StartMoveSequence do
           expect( check_sequence ).to have_received( :response )
         end
         
-        it "updates the Game" do
-          start_move_sequence.start
-          
-          expect( game ).to have_received( :update_attributes ).
-            with( board: "[]", player_turn: :black )
-        end
-        
         it "sends the messages to the observer" do
           start_move_sequence.start
           
@@ -129,10 +124,33 @@ describe StartMoveSequence do
             with( "Sucessful move: a4b6" )
         end
         
-        xit "checks for checkmate" do
+        it "checks for checkmate" do
           start_move_sequence.start
           
-          expect( checkmate ).to receive( :match_finished? )
+          expect( checkmate ).to have_received( :match_finished? )
+        end
+        
+        context "when there is a winner" do
+          it "updates the game with the winner" do
+            start_move_sequence.start
+            
+            expect( game ).to have_received( :update_attributes ).
+              with( board: "[]", winner: :white )
+          end
+        end
+        
+        context "when there is NOT a winner" do
+          before :each do
+            allow( checkmate ).to receive( :match_finished? ).
+              and_return false
+          end
+          
+          it "updates the game with new current player" do
+            start_move_sequence.start
+            
+            expect( game ).to have_received( :update_attributes ).
+              with( board: "[]", player_turn: 6 )
+          end
         end
       end
       

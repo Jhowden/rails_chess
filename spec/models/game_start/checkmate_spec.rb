@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe GameStart::Checkmate do
-  let( :json_board )  { double( "json_board: ") }
+  let( :json_board )  { double( "json_board" ) }
   let( :king_escape_moves ) do
     [
       ["b", 8, "a", 8],
@@ -19,6 +19,7 @@ describe GameStart::Checkmate do
       ["d", 7, "b", 7]
     ]
   end
+  let( :updated_json_board ) { double( "json_board" ) }
   let( :checkmate ) { described_class.new( json_board, :black, :white ) }
   
   before :each do
@@ -64,6 +65,26 @@ describe GameStart::Checkmate do
             "g5b7",
           ]
         )
+      end
+    end
+  end
+  
+  describe "#match_finished?" do
+    context "when there are no possible moves" do
+      before :each do
+        allow( CheckmateMoves::KingEscapeMoves ).to receive( :find_moves ).and_return []
+        allow( CheckmateMoves::CapturePieceMoves ).to receive( :find_moves ).and_return []
+        allow( CheckmateMoves::BlockPieceMoves ).to receive( :find_moves ).and_return []        
+      end
+      
+      it "returns true" do
+        expect( checkmate.match_finished?( updated_json_board ) ).to be_truthy
+      end
+    end
+    
+    context "when there are possible moves" do
+      it "returns false" do
+        expect( checkmate.match_finished?( updated_json_board ) ).to be_falsey
       end
     end
   end

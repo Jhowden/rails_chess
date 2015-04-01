@@ -1,9 +1,5 @@
-require "board_json_parser"
-require "find_pieces/find_team_pieces"
-require "en_passant_commands"
-
 module MoveSequence
-  class StandardKingInCheckSequence
+  class EnPassantCheckSequence
     attr_reader :escape_moves, :input, :players_info, :board
     
     def initialize( escape_moves, input_type, players_info )
@@ -16,12 +12,13 @@ module MoveSequence
     
     def valid_move?()
       return false unless escape_moves.include? transformed_input
-      piece_position, target_position = find_piece_positions
+      piece_position, enemy_pawn, target_position = find_piece_positions
       piece = board.find_piece_on_board piece_position
       if piece.team == players_info.current_team
         piece.update_piece_position target_position
         board.update_board piece
         board.remove_old_position piece_position
+        board.remove_old_position enemy_pawn
         piece.increase_move_counter!
         EnPassantCommands.update_enemy_pawn_status_for_en_passant(
           FindPieces::FindTeamPieces.
@@ -43,7 +40,8 @@ module MoveSequence
       piece = input["piece_location"]["file"] + input["piece_location"]["rank"]
       target = input["target_location"]["file"] + input["target_location"]["rank"]
       
-      piece + target
+      
+      piece + target + input["en_passant"]
     end
     
     def find_piece_positions()
@@ -51,12 +49,19 @@ module MoveSequence
         input["piece_location"]["file"],
         input["piece_location"]["rank"].to_i 
       )
-      enemy_position = Position.new(
+      
+      target_file, target_rank = [
         input["target_location"]["file"],
         input["target_location"]["rank"].to_i
-      )
-
-      return piece_position, enemy_position
+      ]
+      
+      enemy_pawn = Position.new( target_file, en_passant_enemy_pawn_rank( target_rank, players_info.enemy_team ) )
+      target_position = Position.new( target_file, target_rank )
+      return piece_position, enemy_pawn, target_position
+    end
+    
+    def en_passant_enemy_pawn_rank( unadjusted_rank, team )
+      team == :white ? unadjusted_rank + 1 : unadjusted_rank + -1
     end
     
     def king_not_in_check?( updated_board )

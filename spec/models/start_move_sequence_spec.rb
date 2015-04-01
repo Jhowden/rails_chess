@@ -1,32 +1,26 @@
 require "rails_helper"
 
 describe StartMoveSequence do
-  let( :game ) { stub_model Game }
+  let( :game ) { stub_model Game, board: [], player_turn: 5, white_team_id: 5, black_team_id: 2 }
   let( :king ) { double( "king" ) }
   let( :pieces ) { double( "pieces" ) }
   let( :players_info ) { double( "players_info", 
     current_team: :white,
-    cuurent_team_id: 2,
+    cuurent_team_id: 5,
     enemy_team: :black,
-    enemy_team_id: 6,
+    enemy_team_id: 2,
     json_board: "[]" ) }
-  let( :player1 ) { stub_model User }
-  let( :player2 ) { stub_model User }
   let( :observer ) { double( "observer", on_successful_move: nil, on_failed_move: nil ) }
-  let( :input ) { ParsedInput::Standard.new( {} ) }
+  let( :standard_input ) { ParsedInput::Standard.new( {} ) }
   let( :checkmate ) { double( "checkmate", match_finished?: true ) }
-  let( :check_sequence ) { double( "check_sequence" ) }
+  let( :check_sequence ) { double( "check_sequence", valid_move?: true ) }
   let( :escape_moves ) { double( "escape_moves" ) }
   let( :board ) { double( "board", chess_board: [] ) }
    
-  let( :start_move_sequence ) { described_class.new( observer, input, 3 ) }
+  let( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
   
   before :each do
     allow( Game ).to receive( :find ).and_return game
-    allow( game ).to receive( :board ).and_return []
-    allow( game ).to receive( :player_turn ).and_return 5
-    allow( game ).to receive( :white_team_id ).and_return 5
-    allow( game ).to receive( :black_team_id ).and_return 2
     allow( game ).to receive( :update_attributes )
     
     stub_const( "GameStart::PlayersInformation", Class.new )
@@ -46,7 +40,6 @@ describe StartMoveSequence do
     
     stub_const( "MoveSequence::StandardKingInCheckSequence", Class.new )
     allow( MoveSequence::StandardKingInCheckSequence ).to receive( :new ).and_return check_sequence
-    allow( check_sequence ).to receive( :valid_move? ).and_return true
     allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
   end
   
@@ -87,17 +80,34 @@ describe StartMoveSequence do
           with( no_args ).at_least( :once )
       end
     
-      it "calls to MoveSequence::StandardKingInCheckSequence" do
-        start_move_sequence.start
+      context "when using standard input" do
+        subject( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
+        it "calls to MoveSequence::StandardKingInCheckSequence" do
+          subject.start
         
-        expect( MoveSequence::StandardKingInCheckSequence ).to have_received( :new ).
-          with( escape_moves, 
-            input, 
-            players_info,
-            observer,
-            game
-          )
+          expect( MoveSequence::StandardKingInCheckSequence ).to have_received( :new ).
+            with( escape_moves, standard_input, players_info )
+        end
       end
+      
+      context "when using en_passant input" do
+        let( :en_passant_input ) { ParsedInput::EnPassant.new( {} ) }
+        subject( :start_move_sequence ) { described_class.new( observer, en_passant_input, 3 ) }
+        
+        before :each do
+          stub_const( "MoveSequence::EnPassantCheckSequence", Class.new )
+          allow( MoveSequence::EnPassantCheckSequence ).to receive( :new ).and_return check_sequence
+          allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
+        end
+        
+        it "calls to MoveSequence::EnPassantCheckSequence" do
+          subject.start
+          
+          expect( MoveSequence::EnPassantCheckSequence ).to have_received( :new ).
+            with( escape_moves, en_passant_input, players_info )
+        end
+      end
+      
       
       it "performs the move" do
         start_move_sequence.start
@@ -149,7 +159,7 @@ describe StartMoveSequence do
             start_move_sequence.start
             
             expect( game ).to have_received( :update_attributes ).
-              with( board: "[]", player_turn: 6 )
+              with( board: "[]", player_turn: 2 )
           end
         end
       end

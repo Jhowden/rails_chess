@@ -26,22 +26,26 @@ class StartMoveSequence
       case input
       when ParsedInput::Standard
         move_seq = MoveSequence::StandardKingInCheckSequence.new( 
-          possible_escape_moves, input, players_info, observer, game )
-        if move_seq.valid_move?
-          board, response_message = move_seq.response
-          json_board = BoardJsonifier.jsonify_board( board.chess_board )
-          
-          if checkmate.match_finished?
-            game.update_attributes( board: json_board, 
-              winner: players_info.current_team )
-          else
-            game.update_attributes( board: json_board, 
-              player_turn: players_info.enemy_team_id )
-          end
-          observer.on_successful_move( response_message )
+          possible_escape_moves, input, players_info )
+      when ParsedInput::EnPassant
+        move_seq = MoveSequence::EnPassantCheckSequence.new(
+          possible_escape_moves, input, players_info )
+      end
+      
+      if move_seq.valid_move?
+        board, response_message = move_seq.response
+        json_board = BoardJsonifier.jsonify_board( board.chess_board )
+        
+        if checkmate.match_finished?
+          game.update_attributes( board: json_board, 
+            winner: players_info.current_team )
         else
-          observer.on_failed_move( INVALID_MOVE_MSG )
+          game.update_attributes( board: json_board, 
+            player_turn: players_info.enemy_team_id )
         end
+        observer.on_successful_move( response_message )
+      else
+        observer.on_failed_move( INVALID_MOVE_MSG )
       end
     end
     

@@ -39,8 +39,7 @@ describe MoveSequence::StandardKingInCheckSequence do
       [nil, nil, nil, nil, nil, nil, nil, nil],
       [nil, nil, nil, nil, nil, nil, nil, nil],
       [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil]
-      ] )
+      [nil, nil, nil, nil, nil, nil, nil, nil]] )
   end
   let( :parsed_board ) { BoardJsonParser.parse_json_board( player_info.json_board ) }
   let( :game_board ) { Board.new parsed_board }
@@ -50,27 +49,12 @@ describe MoveSequence::StandardKingInCheckSequence do
   
   describe "#valid_move?" do
     before :each do
-      allow( GameStart::Check ).to receive( :king_in_check? ).and_return true
-      
       allow( BoardJsonParser ).to receive( :parse_json_board ).and_return parsed_board
       
       allow( Board ).to receive( :new ).and_return game_board
-      
-      allow( FindPieces::FindTeamPieces ).to receive( :find_king_piece )
-      allow( FindPieces::FindTeamPieces ).to receive( :find_pieces ).and_return []
     end
     
     context "when player_input matches escape moves" do
-      it "finds the king piece and the enemy pieces" do
-        check_seq.valid_move?
-        
-        
-        expect( FindPieces::FindTeamPieces ).to have_received( :find_king_piece ).
-          with( :black, game_board )
-        expect( FindPieces::FindTeamPieces ).to have_received( :find_pieces ).
-          with( :white, game_board ).at_least( :once )
-      end
-      
       it "returns true" do
         expect( check_seq.valid_move? ).to be_truthy
       end
@@ -86,7 +70,7 @@ describe MoveSequence::StandardKingInCheckSequence do
       
       context "when it is an invalid move" do
         it "returns false" do
-          allow( GameStart::Check ).to receive( :king_in_check? ).and_return false
+          allow( GameStart::Check ).to receive( :king_in_check? ).and_return true
           
           expect( check_seq.valid_move? ).to be_falsey
         end

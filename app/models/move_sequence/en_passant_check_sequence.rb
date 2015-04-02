@@ -5,16 +5,16 @@ module MoveSequence
     WHITE_EN_PASSANT_RANK = 1
     BLACK_EN_PASSANT_RANK = -1
     
-    def initialize( escape_moves, input_type, players_info )
+    def initialize( escape_moves, input, players_info )
       @escape_moves = escape_moves
-      @input = input_type.input
+      @input = input
       @players_info = players_info
       @board = Board.new( BoardJsonParser.
         parse_json_board( players_info.json_board ) )
     end
     
     def valid_move?()
-      return false unless escape_moves.include? transformed_input
+      return false unless escape_moves.include? input.chess_notation
       piece_position, enemy_pawn, target_position = find_piece_positions
       piece = board.find_piece_on_board piece_position
       if piece.team == players_info.current_team
@@ -34,28 +34,20 @@ module MoveSequence
     end
     
     def response()
-      return board, "Successful move: #{transformed_input}"
+      return board, "Successful move: #{input.chess_notation}"
     end
     
     private
     
-    def transformed_input()
-      piece = input["piece_location"]["file"] + input["piece_location"]["rank"]
-      target = input["target_location"]["file"] + input["target_location"]["rank"]
-      
-      
-      piece + target + input["en_passant"]
-    end
-    
     def find_piece_positions()
       piece_position = Position.new(
-        input["piece_location"]["file"],
-        input["piece_location"]["rank"].to_i 
+        input.piece_file,
+        input.piece_rank.to_i 
       )
       
       target_file, target_rank = [
-        input["target_location"]["file"],
-        input["target_location"]["rank"].to_i
+        input.target_file,
+        input.target_rank.to_i
       ]
       
       enemy_pawn = Position.new( target_file, en_passant_enemy_pawn_rank( 

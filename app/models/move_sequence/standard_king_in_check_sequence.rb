@@ -6,16 +6,16 @@ module MoveSequence
   class StandardKingInCheckSequence
     attr_reader :escape_moves, :input, :players_info, :board
     
-    def initialize( escape_moves, input_type, players_info )
+    def initialize( escape_moves, input, players_info )
       @escape_moves = escape_moves
-      @input = input_type.input
+      @input = input
       @players_info = players_info
       @board = Board.new( BoardJsonParser.
         parse_json_board( players_info.json_board ) )
     end
     
     def valid_move?()
-      return false unless escape_moves.include? transformed_input
+      return false unless escape_moves.include? input.chess_notation
       piece_position, target_position = find_piece_positions
       piece = board.find_piece_on_board piece_position
       if piece.team == players_info.current_team
@@ -34,26 +34,19 @@ module MoveSequence
     end
     
     def response()
-      return board, "Successful move: #{transformed_input}"
+      return board, "Successful move: #{input.chess_notation}"
     end
     
     private
     
-    def transformed_input()
-      piece = input["piece_location"]["file"] + input["piece_location"]["rank"]
-      target = input["target_location"]["file"] + input["target_location"]["rank"]
-      
-      piece + target
-    end
-    
     def find_piece_positions()
       piece_position = Position.new(
-        input["piece_location"]["file"],
-        input["piece_location"]["rank"].to_i 
+        input.piece_file,
+        input.piece_rank.to_i 
       )
       enemy_position = Position.new(
-        input["target_location"]["file"],
-        input["target_location"]["rank"].to_i
+        input.target_file,
+        input.target_rank.to_i
       )
 
       return piece_position, enemy_position

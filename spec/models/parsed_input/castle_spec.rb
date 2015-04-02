@@ -8,4 +8,10 @@ describe ParsedInput::Castle do
       expect( input_type.input ).to eq "castle" => "0-0"
     end
   end
+  
+  describe "#chess_notation" do
+    it do
+      expect( input_type.chess_notation ).to eq "0-0"
+    end
+  end
 end

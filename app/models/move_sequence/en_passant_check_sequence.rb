@@ -2,6 +2,9 @@ module MoveSequence
   class EnPassantCheckSequence
     attr_reader :escape_moves, :input, :players_info, :board
     
+    WHITE_EN_PASSANT_RANK = 1
+    BLACK_EN_PASSANT_RANK = -1
+    
     def initialize( escape_moves, input_type, players_info )
       @escape_moves = escape_moves
       @input = input_type.input
@@ -55,13 +58,16 @@ module MoveSequence
         input["target_location"]["rank"].to_i
       ]
       
-      enemy_pawn = Position.new( target_file, en_passant_enemy_pawn_rank( target_rank, players_info.enemy_team ) )
+      enemy_pawn = Position.new( target_file, en_passant_enemy_pawn_rank( 
+        target_rank, 
+        players_info.enemy_team )
+      )
       target_position = Position.new( target_file, target_rank )
       return piece_position, enemy_pawn, target_position
     end
     
     def en_passant_enemy_pawn_rank( unadjusted_rank, team )
-      team == :white ? unadjusted_rank + 1 : unadjusted_rank + -1
+      team == :white ? unadjusted_rank + WHITE_EN_PASSANT_RANK : unadjusted_rank + BLACK_EN_PASSANT_RANK
     end
     
     def king_not_in_check?( updated_board )

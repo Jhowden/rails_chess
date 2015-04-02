@@ -6,9 +6,15 @@ class EnPassant::CapturedPieceEnPassantTeamIdentifier
   def self.select_pieces( enemy_pieces, team )
     case team
     when :black
-      enemy_pieces.select { |piece| pawn_that_can_be_captured_through_en_passant( piece, BLACK_CAPTURABLE_EN_PASSANT_RANK ) }
+      enemy_pieces.select { |piece| pawn_that_can_be_captured_through_en_passant( 
+        piece, 
+        BLACK_CAPTURABLE_EN_PASSANT_RANK
+      ) }
     else
-      enemy_pieces.select { |piece| pawn_that_can_be_captured_through_en_passant( piece, WHITE_CAPTURABLE_EN_PASSANT_RANK ) }
+      enemy_pieces.select { |piece| pawn_that_can_be_captured_through_en_passant( 
+        piece, 
+        WHITE_CAPTURABLE_EN_PASSANT_RANK
+      ) }
     end
   end
   

@@ -23,13 +23,15 @@ class StartMoveSequence
       possible_escape_moves = checkmate.find_checkmate_escape_moves
 
 
-      case input
+      move_seq = case input
       when ParsedInput::Standard
-        move_seq = MoveSequence::StandardKingInCheckSequence.new( 
+        MoveSequence::StandardKingInCheckSequence.new( 
           possible_escape_moves, input, players_info )
       when ParsedInput::EnPassant
-        move_seq = MoveSequence::EnPassantCheckSequence.new(
+        MoveSequence::EnPassantCheckSequence.new(
           possible_escape_moves, input, players_info )
+      else
+        MoveSequence::NullCheckSequence.new
       end
       
       if move_seq.valid_move?
@@ -43,6 +45,7 @@ class StartMoveSequence
           game.update_attributes( board: json_board, 
             player_turn: players_info.enemy_team_id )
         end
+        game.user_inputs.create!( input.chess_notation )
         observer.on_successful_move( response_message )
       else
         observer.on_failed_move( INVALID_MOVE_MSG )
@@ -52,7 +55,6 @@ class StartMoveSequence
     # increase move counter for piece -> do this inside checksequence object
     # update en_passant status of pawns -> do this inside checksequence object
     # check to see if other player's king is in check, display flash message
-    # create new AR model ( Game Moves ) and update record to reflect move
     # check to see if there is checkmate after move
   end
   
@@ -61,10 +63,10 @@ class StartMoveSequence
   def checkmate()
     return @checkmate if @checkmate
     @checkmate = GameStart::Checkmate.new( 
-        players_info.json_board,
-        players_info.current_team,
-        players_info.enemy_team 
-      )
+      players_info.json_board,
+      players_info.current_team,
+      players_info.enemy_team 
+    )
   end
   
   def king_in_check?( players_info )

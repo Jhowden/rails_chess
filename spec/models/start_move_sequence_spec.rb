@@ -160,17 +160,17 @@ describe StartMoveSequence do
           expect( check_sequence ).to have_received( :response )
         end
         
-        it "sends the messages to the observer" do
-          start_move_sequence.start
-          
-          expect( observer ).to have_received( :on_successful_move ).
-            with( "Sucessful move: a4b6" )
-        end
-        
         it "checks for checkmate" do
           start_move_sequence.start
           
           expect( checkmate ).to have_received( :match_finished? )
+        end
+        
+        it "updates the user_input for the game" do
+          start_move_sequence.start
+          
+          expect( user_input ).to have_received( :create! ).
+            with( "a4g6" )
         end
         
         context "when there is a winner" do
@@ -194,13 +194,13 @@ describe StartMoveSequence do
             expect( game ).to have_received( :update_attributes ).
               with( board: "[]", player_turn: 2 )
           end
-        end
-        
-        it "updates the user_input for the game" do
-          start_move_sequence.start
           
-          expect( user_input ).to have_received( :create! ).
-            with( "a4g6" )
+          it "sends the messages to the observer" do
+            start_move_sequence.start
+          
+            expect( observer ).to have_received( :on_successful_move ).
+              with( "Sucessful move: a4b6" )
+          end
         end
       end
       

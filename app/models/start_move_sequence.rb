@@ -44,9 +44,9 @@ class StartMoveSequence
         else
           game.update_attributes( board: json_board, 
             player_turn: players_info.enemy_team_id )
+          observer.on_successful_move( response_message )  
         end
         game.user_inputs.create!( input.chess_notation )
-        observer.on_successful_move( response_message )
       else
         observer.on_failed_move( INVALID_MOVE_MSG )
       end

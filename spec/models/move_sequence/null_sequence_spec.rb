@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe MoveSequence::NullCheckSequence do
+describe MoveSequence::NullSequence do
   subject( :check_sequence ) { described_class.new }
   
   describe "#valid_move?: " do

@@ -1,5 +1,5 @@
 module MoveSequence
-  class NullCheckSequence
+  class NullSequence
     
     def valid_move?
       false

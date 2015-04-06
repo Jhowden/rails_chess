@@ -1,12 +1,12 @@
 module MoveSequence
-  class EnPassantCheckSequence
-    attr_reader :escape_moves, :input, :players_info, :board
+  class EnPassantSequence
+    attr_reader :valid_moves, :input, :players_info, :board
     
     WHITE_EN_PASSANT_RANK = 1
     BLACK_EN_PASSANT_RANK = -1
     
-    def initialize( escape_moves, input, players_info )
-      @escape_moves = escape_moves
+    def initialize( valid_moves, input, players_info )
+      @valid_moves = valid_moves
       @input = input
       @players_info = players_info
       @board = Board.new( BoardJsonParser.
@@ -14,7 +14,7 @@ module MoveSequence
     end
     
     def valid_move?()
-      return false unless escape_moves.include? input.chess_notation
+      return false unless valid_moves.include? input.chess_notation
       piece_position, enemy_pawn, target_position = find_piece_positions
       piece = board.find_piece_on_board piece_position
       if piece.team == players_info.current_team

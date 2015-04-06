@@ -2,7 +2,7 @@ require "find_pieces/find_team_pieces"
 require "game_start/players_information"
 require "game_start/checkmate"
 require "game_start/check"
-require "move_sequence/standard_king_in_check_sequence"
+require "move_sequence/standard_sequence"
 require "board_jsonifier"
 
 class StartMoveSequence
@@ -24,15 +24,15 @@ class StartMoveSequence
 
 
       move_seq = case input
-      when ParsedInput::Standard
-        MoveSequence::StandardKingInCheckSequence.new( 
-          possible_escape_moves, input, players_info )
-      when ParsedInput::EnPassant
-        MoveSequence::EnPassantCheckSequence.new(
-          possible_escape_moves, input, players_info )
-      else
-        MoveSequence::NullCheckSequence.new
-      end
+        when ParsedInput::Standard
+          MoveSequence::StandardSequence.new( 
+            possible_escape_moves, input, players_info )
+        when ParsedInput::EnPassant
+          MoveSequence::EnPassantSequence.new(
+            possible_escape_moves, input, players_info )
+        else
+          MoveSequence::NullSequence.new
+        end
       
       if move_seq.valid_move?
         board, response_message = move_seq.response
@@ -50,6 +50,11 @@ class StartMoveSequence
       else
         observer.on_failed_move( INVALID_MOVE_MSG )
       end
+    else
+      move_seq = case input
+        when ParsedInput::Standard
+          MoveSequence::StandardSequence.new( input, players_info )
+        end
     end
     
     # increase move counter for piece -> do this inside checksequence object

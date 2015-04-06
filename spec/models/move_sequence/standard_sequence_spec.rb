@@ -1,7 +1,7 @@
 require "rails_helper"
 require "board_json_parser"
 
-describe MoveSequence::StandardKingInCheckSequence do
+describe MoveSequence::StandardSequence do
   let( :escape_moves ) { ["a3a6", "f6b6"] }
   let( :input_map ) do
     {

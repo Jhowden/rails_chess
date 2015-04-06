@@ -3,11 +3,11 @@ require "find_pieces/find_team_pieces"
 require "en_passant_commands"
 
 module MoveSequence
-  class StandardKingInCheckSequence
-    attr_reader :escape_moves, :input, :players_info, :board
+  class StandardSequence
+    attr_reader :valid_moves, :input, :players_info, :board
     
-    def initialize( escape_moves, input, players_info )
-      @escape_moves = escape_moves
+    def initialize( valid_moves, input, players_info )
+      @valid_moves = valid_moves
       @input = input
       @players_info = players_info
       @board = Board.new( BoardJsonParser.
@@ -15,7 +15,7 @@ module MoveSequence
     end
     
     def valid_move?()
-      return false unless escape_moves.include? input.chess_notation
+      return false unless valid_moves.include? input.chess_notation
       piece_position, target_position = find_piece_positions
       piece = board.find_piece_on_board piece_position
       if piece.team == players_info.current_team

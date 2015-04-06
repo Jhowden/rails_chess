@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe MoveSequence::EnPassantCheckSequence do
+describe MoveSequence::EnPassantSequence do
   let( :escape_moves ) { ["e5d6e.p.", "c4d4", "c4c3", "c4c5", "c4d5", "c4b4", "c4b5", "c4b3", "c4d4"] }
   let( :input_map ) do
     {

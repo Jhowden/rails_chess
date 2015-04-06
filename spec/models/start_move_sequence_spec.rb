@@ -3,7 +3,7 @@ require "rails_helper"
 describe StartMoveSequence do
   let( :game ) { stub_model Game, board: [], player_turn: 5, white_team_id: 5, black_team_id: 2 }
   let( :king ) { double( "king" ) }
-  let( :pieces ) { double( "pieces" ) }
+  let( :pieces ) { [piece1, piece2] }
   let( :user_input_map ) do
     {
       "piece_location" => { "file" => "a", "rank" => "4" },
@@ -23,6 +23,8 @@ describe StartMoveSequence do
   let( :escape_moves ) { double( "escape_moves" ) }
   let( :board ) { double( "board", chess_board: [] ) }
   let( :user_input ) { double( "user_input", create!: nil ) }
+  let( :piece1 ) { double( "piece1", determine_possible_moves: [["a", 3], ["a", 4]] ) }
+  let( :piece2 ) { double( "piece1", determine_possible_moves: [["d", 5], ["d", 6], ["d", 7]] ) }
    
   let( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
   
@@ -46,8 +48,8 @@ describe StartMoveSequence do
     allow( FindPieces::FindTeamPieces ).to receive( :find_pieces ).and_return pieces
     allow( FindPieces::FindTeamPieces ).to receive( :find_king_piece ).and_return king
     
-    stub_const( "MoveSequence::StandardKingInCheckSequence", Class.new )
-    allow( MoveSequence::StandardKingInCheckSequence ).to receive( :new ).and_return check_sequence
+    stub_const( "MoveSequence::StandardSequence", Class.new )
+    allow( MoveSequence::StandardSequence ).to receive( :new ).and_return check_sequence
     allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
   end
   
@@ -90,10 +92,10 @@ describe StartMoveSequence do
     
       context "when using Standard input" do
         subject( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
-        it "calls to MoveSequence::StandardKingInCheckSequence" do
+        it "calls to MoveSequence::StandardSequence" do
           subject.start
         
-          expect( MoveSequence::StandardKingInCheckSequence ).to have_received( :new ).
+          expect( MoveSequence::StandardSequence ).to have_received( :new ).
             with( escape_moves, standard_input, players_info )
         end
       end
@@ -103,15 +105,15 @@ describe StartMoveSequence do
         subject( :start_move_sequence ) { described_class.new( observer, en_passant_input, 3 ) }
         
         before :each do
-          stub_const( "MoveSequence::EnPassantCheckSequence", Class.new )
-          allow( MoveSequence::EnPassantCheckSequence ).to receive( :new ).and_return check_sequence
+          stub_const( "MoveSequence::EnPassantSequence", Class.new )
+          allow( MoveSequence::EnPassantSequence ).to receive( :new ).and_return check_sequence
           allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
         end
         
-        it "calls to MoveSequence::EnPassantCheckSequence" do
+        it "calls to MoveSequence::EnPassantSequence" do
           subject.start
           
-          expect( MoveSequence::EnPassantCheckSequence ).to have_received( :new ).
+          expect( MoveSequence::EnPassantSequence ).to have_received( :new ).
             with( escape_moves, en_passant_input, players_info )
         end
       end
@@ -121,16 +123,16 @@ describe StartMoveSequence do
         subject( :start_move_sequence ) { described_class.new( observer, castle_input, 3 ) }
         
         before :each do
-          stub_const( "MoveSequence::NullCheckSequence", Class.new )
-          allow( MoveSequence::NullCheckSequence ).to receive( :new ).and_return check_sequence
+          stub_const( "MoveSequence::NullSequence", Class.new )
+          allow( MoveSequence::NullSequence ).to receive( :new ).and_return check_sequence
           allow( check_sequence ).to receive( :valid_move? ).
             and_return false
         end
         
-        it "creates a NullCheckSequence" do
+        it "creates a NullSequence" do
           subject.start
           
-          expect( MoveSequence::NullCheckSequence ).to have_received( :new )
+          expect( MoveSequence::NullSequence ).to have_received( :new )
         end
         
         it "notifies the observer that it failed" do
@@ -214,6 +216,27 @@ describe StartMoveSequence do
           
           expect( observer ).to have_received( :on_failed_move ).
             with( "Invalid move. Please select another move." )
+        end
+      end
+    end
+    
+    context "when the player is not in check" do
+      before :each do
+        stub_const "MoveSequence::StandardSequence", Class.new
+        allow( MoveSequence::StandardSequence ).to receive( :new ).
+          and_return check_sequence
+          
+        allow( GameStart::Check ).to receive( :king_in_check? ).and_return false
+      end
+      
+      context "when given a Standard input" do
+        subject( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
+        
+        xit "calls a new StandardSequence" do
+          subject.start
+          
+          expect( MoveSequence::StandardSequence ).to have_received( :new ).
+            with( ["a2a3", "a2a4", "d4d5", "d4d6", "d4d7"], standard_input, players_info )
         end
       end
     end

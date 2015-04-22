@@ -1,5 +1,4 @@
 class GamePieces::Bishop < GamePieces::ChessPiece
-
   attr_reader :board_marker
 
   def initialize( details )
@@ -9,7 +8,10 @@ class GamePieces::Bishop < GamePieces::ChessPiece
   
   def determine_possible_moves
     clear_moves!
-    possible_moves.concat( board.find_diagonal_spaces( self ) )
+
+    moves = board.find_diagonal_spaces( self ).
+      map { |location| starting_location + location }
+    possible_moves.concat moves
     
     possible_moves
   end

@@ -34,7 +34,7 @@ describe GamePieces::Pawn do
         allow( board ).to receive( :move_straight_two_spaces? ).and_return( true )
     
         pawn.determine_possible_moves
-        expect( pawn.possible_moves ).to eq( [["b", 3], ["b", 4]] )
+        expect( pawn.possible_moves ).to eq( [["b", 2, "b", 3], ["b", 2, "b", 4]] )
       end
       
       it "has two possible moves when pawn facing down" do
@@ -42,7 +42,7 @@ describe GamePieces::Pawn do
         allow( board ).to receive( :move_straight_two_spaces? ).and_return( true )
     
         pawn2.determine_possible_moves
-        expect( pawn2.possible_moves ).to eq( [["d", 4], ["d", 3]] )
+        expect( pawn2.possible_moves ).to eq( [["d", 5, "d", 4], ["d", 5, "d", 3]] )
       end
     end
 
@@ -53,7 +53,7 @@ describe GamePieces::Pawn do
           allow( board ).to receive( :move_forward_diagonally? ).with( pawn, :right ).and_return( true )
     
           pawn.determine_possible_moves
-          expect( pawn.possible_moves ).to eq( [["b", 3], ["c", 3]] )
+          expect( pawn.possible_moves ).to eq( [["b", 2, "b", 3], ["b", 2, "c", 3]] )
         end
       
         it "returns only two possible moves when diagonal left" do
@@ -61,7 +61,7 @@ describe GamePieces::Pawn do
           allow( board ).to receive( :move_forward_diagonally? ).with( pawn, :left ).and_return( true )
     
           pawn.determine_possible_moves
-          expect( pawn.possible_moves ).to eq( [["b", 3], ["a", 3]] )
+          expect( pawn.possible_moves ).to eq( [["b", 2, "b", 3], ["b", 2, "a", 3]] )
         end
       end
       
@@ -71,7 +71,7 @@ describe GamePieces::Pawn do
           allow( board ).to receive( :move_forward_diagonally? ).with( pawn2, :right ).and_return( true )
     
           pawn2.determine_possible_moves
-          expect( pawn2.possible_moves ).to eq( [["d", 4], ["c", 4]] )
+          expect( pawn2.possible_moves ).to eq( [["d", 5, "d", 4], ["d", 5, "c", 4]] )
         end
       
         it "returns only two possible moves when diagonal left" do
@@ -79,7 +79,7 @@ describe GamePieces::Pawn do
           allow( board ).to receive( :move_forward_diagonally? ).with( pawn2, :left ).and_return( true )
     
           pawn2.determine_possible_moves
-          expect( pawn2.possible_moves ).to eq( [["d", 4], ["e", 4]] )
+          expect( pawn2.possible_moves ).to eq( [["d", 5, "d", 4], ["d", 5, "e", 4]] )
         end
       end
       
@@ -119,7 +119,7 @@ describe GamePieces::Pawn do
         allow( board ).to receive( :move_straight_two_spaces? ).with( pawn ).and_return( false )
     
         pawn.determine_possible_moves
-        expect( pawn.possible_moves ).to eq( [["b", 3]] )
+        expect( pawn.possible_moves ).to eq( [["b", 2, "b", 3]] )
       end
     end
     
@@ -144,11 +144,12 @@ describe GamePieces::Pawn do
 
       it "returns the possible move for en_passant" do
         allow( EnPassantCommands ).to receive( :can_en_passant? ).and_return( true, false )
-        allow( EnPassantCommands ).to receive( :capture_pawn_en_passant! ).and_return( ["d", 3, "e.p."] )
+        allow( EnPassantCommands ).to receive( :capture_pawn_en_passant! ).
+          and_return( ["b", 2, "d", 3, "e.p."] )
 
         pawn.determine_possible_moves
 
-        expect( pawn.possible_moves ).to eq( [["d", 3, "e.p."]] )
+        expect( pawn.possible_moves ).to eq( [["b", 2, "d", 3, "e.p."]] )
       end
 
       it "does not return any en_passant moves when pawn can't en_passant" do
@@ -165,7 +166,7 @@ describe GamePieces::Pawn do
       allow( board ).to receive( :move_straight_one_space? ).and_return( true )
       allow( board ).to receive( :move_straight_two_spaces? ).with( pawn ).and_return( true )
       pawn.determine_possible_moves
-      expect( pawn.possible_moves ).to eq( [["b", 3], ["b", 4]] )
+      expect( pawn.possible_moves ).to eq( [["b", 2, "b", 3], ["b", 2, "b", 4]] )
     end
   end
 

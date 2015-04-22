@@ -1,5 +1,4 @@
 class GamePieces::Queen < GamePieces::ChessPiece
-
   attr_reader :board_marker
 
   def initialize( details )
@@ -9,10 +8,17 @@ class GamePieces::Queen < GamePieces::ChessPiece
 
   def determine_possible_moves
     clear_moves!
+    
+    horizontal_moves = board.find_horizontal_spaces( self ).
+      map { |location| starting_location + location }
+    vertical_moves = board.find_vertical_spaces( self ).
+      map { |location| starting_location + location }
+    diagonal_moves = board.find_diagonal_spaces( self ).
+      map { |location| starting_location + location }
 
-    possible_moves.concat( board.find_horizontal_spaces( self ) )
-    possible_moves.concat( board.find_vertical_spaces( self ) )
-    possible_moves.concat( board.find_diagonal_spaces( self ) )
+    possible_moves.concat horizontal_moves
+    possible_moves.concat vertical_moves
+    possible_moves.concat diagonal_moves
 
     possible_moves
   end

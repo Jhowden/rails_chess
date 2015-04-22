@@ -10,12 +10,6 @@ describe PawnDiagonal::PawnDiagonalMovement do
   end
   
   describe ".possible_move" do
-    it "returns a pawn's position" do
-      described_class.possible_move( pawn, :previous, 1 )
-
-      expect( pawn ).to have_received( :position )
-    end
-    
     it "returns a new file position for pawn" do
        described_class.possible_move( pawn, :previous, 1 )
        
@@ -24,7 +18,7 @@ describe PawnDiagonal::PawnDiagonalMovement do
     
     it "returns a possible move" do
       expect( described_class.
-        possible_move( pawn, :previous, 1 ) ).to eq ["a", 5]
+        possible_move( pawn, :previous, 1 ) ).to eq ["b", 4, "a", 5]
     end
   end
 end

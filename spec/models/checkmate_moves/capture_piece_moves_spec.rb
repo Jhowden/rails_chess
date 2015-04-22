@@ -68,6 +68,40 @@ describe CheckmateMoves::CapturePieceMoves do
         )
     end
     
+    context "when there are no threatening pieces" do
+      let( :enemy_rook ) { GamePieces::Rook.new( { 
+                             "file" => "c", 
+                             "rank" => 5, 
+                             "team" => :white, 
+                             "board" => nil } ) }
+                               
+      let( :json_board ) do
+        [[{"klass"=>"GamePieces::Knight", "attributes"=>{"file"=>"a", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0}}, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"b", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, {"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"c", "rank"=>5, "team"=>:white, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil]]
+      end
+      
+      before :each do
+        board.chess_board[0][1] = king
+        board.chess_board[0][0] = knight
+        board.chess_board[3][1] = enemy_rook
+    
+        [king, knight, enemy_rook].each do |piece|
+          piece.board = board
+        end
+      end
+      
+      it "returns the possible moves" do
+        expect( described_class.
+          find_moves( JSON.generate( json_board ), :black, :white ) ).to eq []
+      end
+    end
+    
     context "when there are two threatening pieces" do
       let( :json_board ) do
         [[{"klass"=>"GamePieces::Knight", "attributes"=>{"file"=>"a", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0}}, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"b", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, nil, nil, nil, nil, nil, nil],

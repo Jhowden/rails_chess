@@ -1,5 +1,4 @@
 require "en_passant_commands"
-require "file_checker_factory"
 require "pawn_forward_one/pawn_forward_one_factory"
 require "pawn_forward_two/pawn_forward_two_factory"
 require "pawn_diagonal/pawn_diagonal_factory"
@@ -23,8 +22,12 @@ class GamePieces::Pawn < GamePieces::ChessPiece
     possible_moves << piece_move_forward_two_spaces
     possible_moves << piece_move_forward_diagonally( :left )
     possible_moves << piece_move_forward_diagonally( :right )
-    possible_moves << EnPassantCommands.capture_pawn_en_passant!( self, :previous ) if EnPassantCommands.can_en_passant?( self, :previous )
-    possible_moves << EnPassantCommands.capture_pawn_en_passant!( self, :next ) if EnPassantCommands.can_en_passant?( self, :next )
+    possible_moves << EnPassantCommands.
+      capture_pawn_en_passant!( self, :previous ) if EnPassantCommands.
+        can_en_passant?( self, :previous )
+    possible_moves << EnPassantCommands.
+      capture_pawn_en_passant!( self, :next ) if EnPassantCommands.
+        can_en_passant?( self, :next )
     
     possible_moves.compact!
   end

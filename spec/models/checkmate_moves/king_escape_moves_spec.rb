@@ -65,7 +65,7 @@ describe CheckmateMoves::KingEscapeMoves do
           [
             ["b", 8, "a", 8],
             ["b", 8, "c", 7],
-            ["b", 8, "b", 7],
+            ["b", 8, "b", 7]
           ]
         )
     end
@@ -90,16 +90,16 @@ describe CheckmateMoves::KingEscapeMoves do
                               "team" => :black, 
                               "board" => nil } ) }
 
-      let( :enemy_bishop ) { GamePieces::Bishop.new( { 
-                              "file" => "c", 
-                              "rank" => 6, 
-                              "team" => :white, 
+      let( :bishop ) { GamePieces::Bishop.new( { 
+                              "file" => "b", 
+                              "rank" => 7, 
+                              "team" => :black, 
                               "board" => nil } ) }
                                
       let( :json_board ) do
         [[{"klass"=>"GamePieces::King", "attributes"=>{"file"=>"a", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, {"klass"=>"GamePieces::Knight", "attributes"=>{"file"=>"b", "rank"=>8, "team"=>:black, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, nil, nil, nil], 
-        [{"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"a", "rank"=>7, "team"=>:black, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, nil, nil, nil, nil], 
-        [nil, nil, {"klass"=>"GamePieces::Bishop", "attributes"=>{"file"=>"c", "rank"=>6, "team"=>:white, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, nil, nil], 
+        [{"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"a", "rank"=>7, "team"=>:black, "captured"=>false, "move_counter"=>0}}, {"klass"=>"GamePieces::Bishop", "attributes"=>{"file"=>"b", "rank"=>7, "team"=>:black, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, nil, nil, nil], 
+        [nil, nil, nil, nil, nil, nil, nil, nil], 
         [nil, nil, nil, nil, nil, nil, nil, nil], 
         [nil, nil, nil, nil, nil, nil, nil, nil], 
         [nil, nil, nil, nil, nil, nil, nil, nil], 
@@ -110,7 +110,7 @@ describe CheckmateMoves::KingEscapeMoves do
       before :each do
         board.chess_board[0][0] = king
         board.chess_board[0][1] = knight
-        board.chess_board[2][2] = enemy_bishop
+        board.chess_board[1][1] = bishop
         board.chess_board[1][0] = rook
     
         [king, knight, enemy_bishop, enemy_rook].each do |piece|

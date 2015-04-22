@@ -16,10 +16,10 @@ describe GamePieces::Rook do
 
     it "clears possible moves when not empty" do
       rook.possible_moves << ["a", 3]
-      allow( board ).to receive( :find_horizontal_spaces ).and_return( [["c",4]] )
+      allow( board ).to receive( :find_horizontal_spaces ).and_return( [["c", 4], ["c", 5]] )
       allow( board ).to receive( :find_vertical_spaces ).and_return( [["d",3]] )
       rook.determine_possible_moves
-      expect( rook.possible_moves ).to eq( [["c", 4], ["d", 3]] )
+      expect( rook.possible_moves ).to eq( [["e", 4, "c", 4], ["e", 4, "c", 5], ["e", 4, "d", 3]] )
     end
   end
 

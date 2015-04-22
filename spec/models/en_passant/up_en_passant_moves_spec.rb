@@ -33,7 +33,7 @@ describe EnPassant::UpEnPassantMoves do
   
   describe "#possible_move_input" do
     it "returns the en_passant input command" do
-      expect( ep.possible_move_input( :next ) ).to eq( ["f", 6, "e.p." ] )
+      expect( ep.possible_move_input( :next ) ).to eq( ["e", 4, "f", 6, "e.p." ] )
     end
   end
 end

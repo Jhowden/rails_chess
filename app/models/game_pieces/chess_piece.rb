@@ -31,4 +31,8 @@ class GamePieces::ChessPiece
   def increase_move_counter!
     @move_counter += 1
   end
+  
+  def starting_location
+    [position.file, position.rank]
+  end
 end

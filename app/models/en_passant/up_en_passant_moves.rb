@@ -14,6 +14,11 @@ class EnPassant::UpEnPassantMoves < EnPassant::EnPassantMoves
   end
 
   def possible_move_input( navigation )
-    [pawn.new_file_position( navigation ), RANK_AFTER_CAPTURING_BY_EN_PASSANT, EN_PASSANT_WORD_MARKER]
+    [
+      pawn.position.file,
+      pawn.position.rank,
+      pawn.new_file_position( navigation ), 
+      RANK_AFTER_CAPTURING_BY_EN_PASSANT, 
+      EN_PASSANT_WORD_MARKER]
   end
 end

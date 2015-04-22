@@ -15,9 +15,9 @@ describe GamePieces::King do
 
     it "clears possible moves when not empty" do
       king.possible_moves << ["a", 3]
-      allow( board ).to receive( :find_king_spaces ).and_return( [["c", 3]] )
+      allow( board ).to receive( :find_king_spaces ).and_return( [["f", 5], ["c", 3]] )
       king.determine_possible_moves
-      expect( king.possible_moves ).to eq( [["c", 3]] )
+      expect( king.possible_moves ).to eq( [["e", 4, "f", 5], ["e", 4, "c", 3]] )
     end
   end
   

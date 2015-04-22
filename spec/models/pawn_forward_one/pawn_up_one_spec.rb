@@ -5,7 +5,7 @@ describe PawnForwardOne::PawnUpOne do
   
   describe ".possible_move" do
     it "returns a possible move" do
-      expect( described_class.possible_move( position ) ).to eq ["f", 5]
+      expect( described_class.possible_move( position ) ).to eq ["f", 4, "f", 5]
     end
   end
 end

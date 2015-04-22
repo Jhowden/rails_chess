@@ -16,9 +16,9 @@ describe GamePieces::Bishop do
 
     it "clears possible moves when not empty" do
       bishop.possible_moves << ["a", 3]
-      allow( board ).to receive( :find_diagonal_spaces ).and_return( [["c", 3]] )
+      allow( board ).to receive( :find_diagonal_spaces ).and_return( [["c", 3], ["d", 2]] )
       bishop.determine_possible_moves
-      expect( bishop.possible_moves ).to eq( [["c", 3]] )
+      expect( bishop.possible_moves ).to eq( [["e", 4, "c", 3], ["e", 4, "d", 2]] )
     end
   end
 

@@ -19,7 +19,7 @@ describe PawnDiagonal::PawnDiagonalLeftUp do
     end
     
     it "returns a possible move" do
-      expect( described_class.move( pawn, board ) ).to eq ["d", 5]
+      expect( described_class.move( pawn, board ) ).to eq ["e", 4, "d", 5]
     end
   end
 end

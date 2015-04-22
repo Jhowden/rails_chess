@@ -21,9 +21,9 @@ describe GamePieces::Knight do
 
     it "clears possible moves when not empty" do
       knight.possible_moves << ["a", 3]
-      allow( board ).to receive( :find_knight_spaces ).and_return( [["c", 3]] )
+      allow( board ).to receive( :find_knight_spaces ).and_return( [["c", 3], ["d", 6]] )
       knight.determine_possible_moves
-      expect( knight.possible_moves ).to eq( [["c", 3]] )
+      expect( knight.possible_moves ).to eq( [["e", 4, "c", 3], ["e", 4, "d", 6]] )
     end
   end
 

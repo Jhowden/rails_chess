@@ -1,5 +1,4 @@
 class GamePieces::Knight < GamePieces::ChessPiece
-
   attr_reader :board_marker
 
   KNIGHT_SPACE_MODIFIERS = [[-1, -2], [-2, -1], [1, -2], [2, -1], [-1, 2], [-2, 1], [1, 2], [2, 1]]
@@ -12,7 +11,9 @@ class GamePieces::Knight < GamePieces::ChessPiece
   def determine_possible_moves
     clear_moves!
     
-    possible_moves.concat( board.find_knight_spaces( self ) )
+    moves = board.find_knight_spaces( self ).
+      map { |location| starting_location + location }
+    possible_moves.concat moves
     
     possible_moves
   end

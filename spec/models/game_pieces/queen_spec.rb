@@ -21,13 +21,17 @@ describe GamePieces::Queen do
     it "clears possible moves when not empty" do
       queen.possible_moves << ["a", 3]
       allow( board ).to receive( :find_diagonal_spaces ).with( queen ).
-        and_return( [] )
+        and_return( [["d", 3]] )
       allow( board ).to receive( :find_horizontal_spaces ).with( queen ).
-        and_return( [["c", 3]] )
+        and_return( [["c", 2]] )
       allow( board ).to receive( :find_vertical_spaces ).with( queen ).
-        and_return( [] )
+        and_return( [["e", 5], ["e", 6]] )
       queen.determine_possible_moves
-      expect( queen.possible_moves ).to eq( [["c", 3]] )
+      expect( queen.possible_moves ).to eq( 
+        [["e", 4, "c", 2],  
+         ["e", 4, "e", 5],
+         ["e", 4, "e", 6],
+         ["e", 4, "d", 3]] )
     end
   end
 

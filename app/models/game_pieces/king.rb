@@ -1,5 +1,4 @@
 class GamePieces::King < GamePieces::ChessPiece
-  
   attr_reader :checkmate, :board_marker
 
   KING_SPACE_MODIFIERS = [[-1, 0], [-1, -1], [0, -1], [1, -1], [1, 0], [1,1], [0,1], [-1, 1]]
@@ -12,7 +11,10 @@ class GamePieces::King < GamePieces::ChessPiece
 
   def determine_possible_moves
     clear_moves!
-    possible_moves.concat( board.find_king_spaces( self ) )
+
+    moves = board.find_king_spaces( self ).
+      map { |location| starting_location + location }
+    possible_moves.concat moves
 
     possible_moves
   end

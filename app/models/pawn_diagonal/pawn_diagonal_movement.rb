@@ -1,6 +1,9 @@
+require "file_checker_factory"
+
 class PawnDiagonal::PawnDiagonalMovement
   def self.possible_move( pawn, navigation, rank_modifier)
     [
+      pawn.position.file, pawn.position.rank,
       find_new_file_position( pawn, navigation ),
       find_new_rank_position( pawn, rank_modifier ) 
     ]

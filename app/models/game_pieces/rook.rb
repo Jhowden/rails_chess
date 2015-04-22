@@ -1,5 +1,4 @@
 class GamePieces::Rook < GamePieces::ChessPiece
-
   attr_reader :board_marker
 
   def initialize( details )
@@ -10,8 +9,12 @@ class GamePieces::Rook < GamePieces::ChessPiece
   def determine_possible_moves
     clear_moves!
     
-    possible_moves.concat( board.find_horizontal_spaces( self ) )
-    possible_moves.concat( board.find_vertical_spaces( self ) )
+    horizontal_spaces = board.find_horizontal_spaces( self ).
+      map { |location| starting_location + location }
+    vertical_spaces = board.find_vertical_spaces( self ).
+      map { |location| starting_location + location }
+    possible_moves.concat horizontal_spaces
+    possible_moves.concat vertical_spaces
     
     possible_moves
   end

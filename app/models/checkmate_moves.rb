@@ -8,12 +8,6 @@ module CheckmateMoves
   def self.find_team_pieces( enemy_team, board )
     FindPieces::FindTeamPieces.find_pieces( enemy_team, board )
   end
-  
-  def self.transform_moves( enemy_moves )
-    enemy_moves.map do |move| 
-      move.include?( "e.p." ) ? move.last( 4 ) : move.last( 2 )
-    end
-  end
 end
 
 require "checkmate_moves/block_piece_moves"

@@ -1,6 +1,7 @@
 require "checkmate_moves"
 require "board_json_parser"
 require "escape_checkmate"
+require "transform_piece_moves"
 
 module CheckmateMoves
   class CapturePieceMoves
@@ -12,7 +13,7 @@ module CheckmateMoves
         enemy_team, current_team, board )
       return [] if threatening_pieces_position.size >= 2 || threatening_pieces_position.empty?
       team_pieces( current_team, board ).map { |piece|
-        possible_moves = CheckmateMoves.
+        possible_moves = TransformPieceMoves.
           transform_moves( piece.determine_possible_moves )
         if possible_moves.include?( 
             [threatening_pieces_position.first.file, 
@@ -52,7 +53,7 @@ module CheckmateMoves
       enemy_pieces = CheckmateMoves.find_team_pieces( enemy_team, board )
       king = CheckmateMoves.find_king( current_team, board )
       enemy_pieces.map { |piece|
-        possible_piece_moves = CheckmateMoves.transform_moves( 
+        possible_piece_moves = TransformPieceMoves.transform_moves( 
           piece.determine_possible_moves )
         if possible_piece_moves.include?( [king.position.file, king.position.rank] )
           Position.new( piece.position.file, piece.position.rank )

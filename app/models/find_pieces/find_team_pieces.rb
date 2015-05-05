@@ -16,5 +16,11 @@ module FindPieces
       }.flatten.each { |piece| piece.board = board }.
         first
     end
+
+    def self.find_kingside_rook( team, board, file_index, rank_index )
+      rook = board.chess_board[rank_index][file_index]
+      rook.board = board
+      rook
+    end
   end
 end

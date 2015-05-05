@@ -23,8 +23,14 @@ describe StartMoveSequence do
   let( :escape_moves ) { double( "escape_moves" ) }
   let( :board ) { double( "board", chess_board: [] ) }
   let( :user_input ) { double( "user_input", create!: nil ) }
-  let( :piece1 ) { double( "piece1", determine_possible_moves: [["a", 3], ["a", 4]] ) }
-  let( :piece2 ) { double( "piece1", determine_possible_moves: [["d", 5], ["d", 6], ["d", 7]] ) }
+  let( :piece1 ) { double( "piece1", 
+    team: :white, 
+    determine_possible_moves: [["a", 2, "a", 3], ["a", 2, "a", 4]] ) }
+  let( :piece2 ) { double( "piece1", 
+    team: :white, 
+    determine_possible_moves: [["d", 4, "d", 5], 
+                               ["d", 4, "d", 6], 
+                               ["d", 4, "d", 7]] ) }
    
   let( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
   
@@ -51,6 +57,10 @@ describe StartMoveSequence do
     stub_const( "MoveSequence::StandardSequence", Class.new )
     allow( MoveSequence::StandardSequence ).to receive( :new ).and_return check_sequence
     allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
+    
+    stub_const( "MoveSequence::CastleSequence", Class.new )
+    stub_const( "MoveSequence::EnPassantSequence", Class.new )
+    stub_const( "MoveSequence::NullSequence", Class.new )
   end
   
   it "instantiates a Players object" do
@@ -105,7 +115,6 @@ describe StartMoveSequence do
         subject( :start_move_sequence ) { described_class.new( observer, en_passant_input, 3 ) }
         
         before :each do
-          stub_const( "MoveSequence::EnPassantSequence", Class.new )
           allow( MoveSequence::EnPassantSequence ).to receive( :new ).and_return check_sequence
           allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
         end
@@ -123,7 +132,6 @@ describe StartMoveSequence do
         subject( :start_move_sequence ) { described_class.new( observer, castle_input, 3 ) }
         
         before :each do
-          stub_const( "MoveSequence::NullSequence", Class.new )
           allow( MoveSequence::NullSequence ).to receive( :new ).and_return check_sequence
           allow( check_sequence ).to receive( :valid_move? ).
             and_return false
@@ -144,7 +152,7 @@ describe StartMoveSequence do
       end
       
       
-      it "performs the move" do
+      it "checks if the move is valid" do
         start_move_sequence.start
 
         expect( check_sequence ).to have_received( :valid_move? )
@@ -221,22 +229,116 @@ describe StartMoveSequence do
     end
     
     context "when the player is not in check" do
+      subject( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
+      
       before :each do
-        stub_const "MoveSequence::StandardSequence", Class.new
+        allow( GameStart::Check ).to receive( :king_in_check? ).and_return false
         allow( MoveSequence::StandardSequence ).to receive( :new ).
           and_return check_sequence
-          
-        allow( GameStart::Check ).to receive( :king_in_check? ).and_return false
       end
       
       context "when given a Standard input" do
-        subject( :start_move_sequence ) { described_class.new( observer, standard_input, 3 ) }
-        
-        xit "calls a new StandardSequence" do
+        it "calls a new StandardSequence" do
           subject.start
           
           expect( MoveSequence::StandardSequence ).to have_received( :new ).
             with( ["a2a3", "a2a4", "d4d5", "d4d6", "d4d7"], standard_input, players_info )
+        end
+      end
+      
+      it "checks if the move is valid" do
+        subject.start
+
+        expect( check_sequence ).to have_received( :valid_move? )
+      end
+      
+      context "when using EnPassant input" do
+        let( :en_passant_input ) { ParsedInput::EnPassant.new( user_input_map ) }
+        subject( :start_move_sequence ) { described_class.new( observer, en_passant_input, 3 ) }
+        
+        before :each do
+          allow( MoveSequence::EnPassantSequence ).to receive( :new ).and_return check_sequence
+          allow( check_sequence ).to receive( :response ).and_return [board, "Sucessful move: a4b6"]
+        end
+        
+        it "calls to MoveSequence::EnPassantSequence" do
+          subject.start
+          
+          expect( MoveSequence::EnPassantSequence ).to have_received( :new ).
+            with( ["a2a3", "a2a4", "d4d5", "d4d6", "d4d7"], en_passant_input, players_info )
+        end
+      end
+      
+      context "when using Castle input" do
+        let( :castle_input ) { ParsedInput::Castle.new( "0-0" ) }
+        subject( :start_move_sequence ) { described_class.new( observer, castle_input, 3 ) }
+        
+        before :each do
+          allow( MoveSequence::CastleSequence ).to receive( :new ).and_return check_sequence
+          allow( check_sequence ).to receive( :valid_move? ).
+            and_return false
+        end
+        
+        it "calls to MoveSequence::CastleSequence" do
+          subject.start
+          
+          expect( MoveSequence::CastleSequence ).to have_received( :new )
+        end
+      end
+      
+      context "when it is a valid move" do
+        before :each do
+          allow( BoardJsonifier ).to receive( :jsonify_board ).
+            and_return "[]"
+        end
+        
+        it "calls for the response" do
+          subject.start
+          
+          expect( check_sequence ).to have_received( :response )
+        end
+        
+        it "checks for checkmate" do
+          subject.start
+          
+          expect( checkmate ).to have_received( :match_finished? )
+        end
+        
+        it "updates the user_input for the game" do
+          subject.start
+          
+          expect( user_input ).to have_received( :create! ).
+            with( "a4g6" )
+        end
+        
+        context "when there is a winner" do
+          it "updates the game with the winner" do
+            subject.start
+            
+            expect( game ).to have_received( :update_attributes ).
+              with( board: "[]", winner: :white )
+          end
+        end
+        
+        context "when there is NOT a winner" do
+          before :each do
+            allow( checkmate ).to receive( :match_finished? ).
+              and_return false
+          end
+          
+          it "updates the game with new current player" do
+            subject.start
+            
+            expect( game ).to have_received( :update_attributes ).
+              with( board: "[]", player_turn: 2 )
+          end
+          
+          it "sends the messages to the observer" do
+            subject .start
+          
+            expect( observer ).to have_received( :on_successful_move ).
+              with( "Sucessful move: a4b6" )
+          end
         end
       end
     end

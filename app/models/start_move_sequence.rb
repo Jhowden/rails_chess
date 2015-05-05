@@ -14,14 +14,12 @@ class StartMoveSequence
     @input = input
     @game = Game.find game_id
     @players_info = GameStart::PlayersInformation.new(
-      game.determine_players_status, game.board
-    )
+      game.determine_players_status, game.board )
   end
   
   def start()
-    if king_in_check? players_info
+    if king_in_check?
       possible_escape_moves = checkmate.find_checkmate_escape_moves
-
 
       move_seq = case input
         when ParsedInput::Standard
@@ -53,8 +51,29 @@ class StartMoveSequence
     else
       move_seq = case input
         when ParsedInput::Standard
-          MoveSequence::StandardSequence.new( input, players_info )
+          MoveSequence::StandardSequence.new( 
+            find_pieces_moves, input, players_info )
+        when ParsedInput::EnPassant
+          MoveSequence::EnPassantSequence.new(
+            find_pieces_moves, input, players_info )
+        when ParsedInput::Castle
+          MoveSequence::CastleSequence.new( input, players_info )
         end
+        
+      if move_seq.valid_move?
+        board, response_message = move_seq.response
+        json_board = BoardJsonifier.jsonify_board( board.chess_board )
+        
+        if checkmate.match_finished?
+          game.update_attributes( board: json_board,
+            winner: players_info.current_team )
+        else
+          game.update_attributes( board: json_board, 
+            player_turn: players_info.enemy_team_id )
+          observer.on_successful_move( response_message )
+        end
+        game.user_inputs.create!( input.chess_notation )
+      end
     end
     
     # increase move counter for piece -> do this inside checksequence object
@@ -74,16 +93,29 @@ class StartMoveSequence
     )
   end
   
-  def king_in_check?( players_info )
+  # this should be someplace else
+  def king_in_check?()
     GameStart::Check.king_in_check?( 
       FindPieces::FindTeamPieces.
         find_king_piece( 
           players_info.current_team, 
-          BoardJsonParser.parse_json_board( players_info.json_board ) ),
+          board ),
       FindPieces::FindTeamPieces.
         find_pieces( 
         players_info.enemy_team, 
-        BoardJsonParser.parse_json_board( players_info.json_board ) )
+        board )
     )
+  end
+  
+  def find_pieces_moves()
+    FindPieces::FindTeamPieces.
+      find_pieces( 
+      players_info.current_team, 
+      board ).map( &:determine_possible_moves ).flatten( 1 ).
+        uniq.map{ |move| move.map( &:to_s ).join }
+  end
+  
+  def board()
+    BoardJsonParser.parse_json_board( players_info.json_board )
   end
 end

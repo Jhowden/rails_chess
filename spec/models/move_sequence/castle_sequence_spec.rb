@@ -2,8 +2,8 @@ require "rails_helper"
 require "board_json_parser"
 
 describe MoveSequence::CastleSequence do
-  let( :queenside_input_map ) { { "castle" =>  "0-0-0"} }
-  let( :kingside_input_map ) { { "castle" => "0-0"  } }
+  let( :queenside_input_map ) { "0-0-0" }
+  let( :kingside_input_map )  { "0-0" }
   let( :queenside_board ) do
     [[{"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"a", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"e", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, nil, nil, nil],
     [nil, nil, nil, {"klass"=>"GamePieces::Queen", "attributes"=>{"file"=>"d", "rank"=>7, "team"=>:white, "captured"=>false, "move_counter"=>0}}, nil, nil, nil, nil],
@@ -70,7 +70,9 @@ describe MoveSequence::CastleSequence do
          "rank" => 8,
          "team" => :white
         } ) }
-      let( :board ) { double( "board" ) }
+      let( :board )     { double( "board" ) }
+      let( :pieces )    { double( "pieces" ) }
+      let( :king_side ) { double( "king_side" ) }
         
       subject( :seq ) { described_class.new( input, players_info ) }
       
@@ -78,26 +80,23 @@ describe MoveSequence::CastleSequence do
         stub_const( "FindPieces::FindTeamPieces", Class.new )
         allow( FindPieces::FindTeamPieces ).to receive( :find_kingside_rook ).and_return rook
         allow( FindPieces::FindTeamPieces ).to receive( :find_king_piece ).and_return king
+        allow( FindPieces::FindTeamPieces ).to receive( :find_pieces ).and_return pieces
         
-        stub_const( "Board", Class.new )
-        allow( Board ).to receive( :new ).and_return board
+        stub_const( "Castle::KingSide", Class.new )
+        allow( Castle::KingSide ).to receive( :new ).and_return king_side
+        allow( king_side ).to receive( :can_castle? ).and_return true
       end
       
-      it "finds the kingside rook" do
+      it "instantiates the correct Castle Object" do
         subject.valid_move?
         
-        expect( FindPieces::FindTeamPieces ).to have_received( :find_kingside_rook ).
-          with( :white, board, 7, 0  )
+        expect( Castle::KingSide ).to have_received( :new ).with players_info
       end
       
-      it "finds the king" do
+      it "checks if the king can castle" do
         subject.valid_move?
         
-        expect( FindPieces::FindTeamPieces ).to have_received( :find_king_piece ).
-          with( :white, board )
-      end
-      
-      xit "checks if a king is in check after each move" do
+        expect( king_side ).to have_received( :can_castle? )
       end
     end
   end

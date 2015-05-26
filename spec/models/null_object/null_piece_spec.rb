@@ -14,4 +14,11 @@ describe NullObject::NullPiece do
       expect( null_piece.move_counter ).to be_nil
     end
   end
+  
+  describe "#determine_possible_moves" do
+    it "returns false" do
+      expect( null_piece.determine_possible_moves ).
+        to be_falsey
+    end
+  end
 end

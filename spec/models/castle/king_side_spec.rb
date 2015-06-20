@@ -16,7 +16,7 @@ describe Castle::KingSide do
     end
   end
   
-  describe "response" do
+  describe "#response" do
     let( :players_info ) { double( "player_info", current_team: :white,
       enemy_team: :black, json_board: JSON.generate( kingside_board ) ) }
       

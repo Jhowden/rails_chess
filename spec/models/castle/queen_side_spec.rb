@@ -1,5 +1,5 @@
 require "rails_helper"
-require "castle"
+require "castle/queen_side"
 require "board_jsonifier"
 
 describe Castle::QueenSide do

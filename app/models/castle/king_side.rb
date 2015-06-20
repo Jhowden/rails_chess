@@ -1,5 +1,9 @@
+require "castle_movement_helpers"
+
 module Castle
   class KingSide
+    include CastleMovementHelpers
+    
     CASTLE_KINGSIDE_FILE_CONTAINER = ["f", "g"]
     
     attr_reader :players_info, :board
@@ -13,15 +17,15 @@ module Castle
     def can_castle?()
       dummy_board = Board.new(
         BoardJsonParser.parse_json_board( players_info.json_board ) )
-      rook = find_rook dummy_board
-      king = find_king dummy_board
+      rook = find_castle_rook dummy_board, KINGSIDE_ROOK_FILE_INDEX
+      king = find_castle_king dummy_board
       
-      kingside_spaces_valid?( rook, king )
+      legal_to_castle?( rook, king, CASTLE_KINGSIDE_FILE_CONTAINER )
     end
 
     def response()
-      king = find_king board
-      rook = find_rook board
+      king = find_castle_king board
+      rook = find_castle_rook board, KINGSIDE_ROOK_FILE_INDEX
       [
         [king, CASTLE_KINGSIDE_FILE_CONTAINER.last],
         [rook, CASTLE_KINGSIDE_FILE_CONTAINER.first]
@@ -40,44 +44,6 @@ module Castle
       board.update_board piece
       board.remove_old_position starting_piece_position
       piece.increase_move_counter!
-    end
-
-    def find_king( board )
-      Castle.find_king( players_info.current_team, board )
-    end
-
-    def find_rook( board )
-      Castle.find_rook( players_info.current_team, board, Castle::KINGSIDE_ROOK_FILE_INDEX )
-    end
-
-    def kingside_spaces_valid?( rook, king )
-      if legal_to_castle?( king.move_counter, rook.move_counter ) && !king_side_spaces_occupied?
-        boolean_moves = CASTLE_KINGSIDE_FILE_CONTAINER.map do |file|
-        dummy_board = Board.new(
-          BoardJsonParser.parse_json_board( players_info.json_board ) )
-        Castle.valid_move?( king, players_info, dummy_board, file )
-      end
-        boolean_moves.all? { |boolean| boolean }
-      else
-        false
-      end
-    end
-    
-    def king_side_spaces_occupied?()
-      CASTLE_KINGSIDE_FILE_CONTAINER.map { |file|
-        occupied_space?( file )
-      }.any? { |boolean| boolean }
-    end
-    
-    def occupied_space?( file )
-      rank = :white == players_info.current_team ? Castle::WHITE_ROOK_RANK : Castle::BLACK_ROOK_RANK
-      piece = board.
-        find_piece_on_board( Position.new( file, rank ) )
-      piece.team
-    end
-    
-    def legal_to_castle?( king_movement_counter, rook_movement_counter )
-      [king_movement_counter, rook_movement_counter].all? { |counter| counter == 0 }
     end
   end
 end

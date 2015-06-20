@@ -1,20 +1,5 @@
-require "find_pieces/find_team_pieces"
-
 module MoveSequence
   class CastleSequence
-    TEAM_COLOR_CASTLE_RANK_MAP = {black: 1, white: 8}
-
-    CASTLE_QUEENSIDE_FILE_CONTAINER = ["d", "c", "b"]
-    CASTLE_KINGSIDE_FILE_CONTAINER = ["f", "g"]
-
-    KINGSIDE_ROOK_RANK = 8
-
-    QUEENSIDE_ROOK_FILE_INDEX = 0
-    KINGSIDE_ROOK_FILE_INDEX = 7
-    
-    WHITE_ROOK_RANK_INDEX = 0
-    BLACK_ROOK_RANK_INDEX = 7
-    
     attr_reader :input, :players_info, :board
     
     def initialize( input, players_info )
@@ -36,6 +21,8 @@ module MoveSequence
       return @castle_side if @castle_side
       if input.chess_notation == "0-0"
         @castle_side = Castle::KingSide.new( players_info )
+      else
+        @castle_side = Castle::QueenSide.new( players_info )
       end
     end
 

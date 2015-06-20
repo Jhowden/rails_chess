@@ -75,11 +75,6 @@ class StartMoveSequence
         game.user_inputs.create!( input.chess_notation )
       end
     end
-    
-    # increase move counter for piece -> do this inside checksequence object
-    # update en_passant status of pawns -> do this inside checksequence object
-    # check to see if other player's king is in check, display flash message
-    # check to see if there is checkmate after move
   end
   
   private

@@ -4,6 +4,12 @@ module Castle
   WHITE_ROOK_RANK_INDEX = 0
   BLACK_ROOK_RANK_INDEX = 7
   
+  WHITE_ROOK_RANK = 8
+  BLACK_ROOK_RANK = 1
+  
+  KINGSIDE_ROOK_FILE_INDEX = 7
+  QUEENSIDE_ROOK_FILE_INDEX = 0
+  
   def self.find_rook( current_team, board, file_index )
     rank_index = current_team == :white ? Castle::WHITE_ROOK_RANK_INDEX : Castle::BLACK_ROOK_RANK_INDEX
     FindPieces::FindTeamPieces.
@@ -34,3 +40,4 @@ module Castle
 end
 
 require "castle/king_side"
+require "castle/queen_side"

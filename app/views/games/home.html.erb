@@ -19,7 +19,7 @@
 <% end %>
 
 <% if @game.winner != nil %>
-  <p><%= Game.find( @game.winner ).fullname %> has won the game on <%= @game.updated_at%></p>
+  <p><%= User.find( @game.winner ).fullname %> has won the game on <%= @game.updated_at%></p>
 <% elsif @game.player_turn == current_user.id %>
   <%= form_tag( game_input_path( @game ), method: "post" ) do %>
     <%= label_tag( :piece_location, "Select the piece you want to move:" ) %>

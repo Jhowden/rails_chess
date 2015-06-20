@@ -1,5 +1,3 @@
-require "piece_movement/move_diagonal_factory"
-
 module PieceMovement
   module PawnMovement
     

@@ -14,6 +14,23 @@ module Castle
     FindPieces::FindTeamPieces.
       find_king_piece( current_team, board )
   end
+
+  def self.valid_move?( king, players_info, board, file )
+    starting_position = king.position.dup
+    king.update_piece_position( Position.new( file, king.position.rank ) )
+    board.update_board king
+    board.remove_old_position starting_position
+    king_not_in_check?( board, king, players_info.enemy_team )
+  end
+
+  private
+
+  def self.king_not_in_check?( updated_board, king, enemy_team )
+    !GameStart::Check.king_in_check?(
+      king,
+      FindPieces::FindTeamPieces.
+        find_pieces( enemy_team, updated_board ) )
+  end
 end
 
 require "castle/king_side"

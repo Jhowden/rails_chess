@@ -10,8 +10,19 @@ describe Castle::KingSide do
     
       subject( :king_side ) { described_class.new( players_info ) }
       
-      it "checks to see it is a valid castle move" do
+      it "returns true" do
         expect( subject.can_castle? ).to be_truthy
+      end
+    end
+    
+    context "when castling is invalid" do
+      let( :players_info ) { double( "player_info", current_team: :white,
+        enemy_team: :black, json_board: JSON.generate( invalid_kingside_board ) ) }
+    
+      subject( :king_side ) { described_class.new( players_info ) }
+      
+      it "returns false" do
+        expect( subject.can_castle? ).to be_falsey
       end
     end
   end
@@ -34,7 +45,7 @@ describe Castle::KingSide do
     end
   end
   
-  def kingside_board
+  def kingside_board()
     [[nil, nil, nil, nil, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"e", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, nil, nil, {"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"h", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>0}}],
     [nil, nil, nil, nil, nil, nil, nil, nil],
     [nil, nil, nil, nil, nil, nil, nil, nil],
@@ -45,10 +56,21 @@ describe Castle::KingSide do
     [nil, nil, nil, nil, nil, nil, nil, nil]]
   end
   
-  def ending_kingside_board
+  def ending_kingside_board()
     [[nil, nil, nil, nil, nil, {"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"f", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>1}}, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"g", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>1, "checkmate"=>false}}, nil],
     [nil, nil, nil, nil, nil, nil, nil, nil],
     [nil, nil, nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, nil, nil, nil]]
+  end
+  
+  def invalid_kingside_board()
+    [[nil, nil, nil, nil, {"klass"=>"GamePieces::King", "attributes"=>{"file"=>"e", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>0, "checkmate"=>false}}, nil, nil, {"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"h", "rank"=>8, "team"=>:white, "captured"=>false, "move_counter"=>0}}],
+    [nil, nil, nil, nil, nil, nil, nil, nil],
+    [nil, nil, nil, nil, nil, {"klass"=>"GamePieces::Rook", "attributes"=>{"file"=>"f", "rank"=>6, "team"=>:black, "captured"=>false, "move_counter"=>1}}, nil, nil],
     [nil, nil, nil, nil, nil, nil, nil, nil],
     [nil, nil, nil, nil, nil, nil, nil, nil],
     [nil, nil, nil, nil, nil, nil, nil, nil],

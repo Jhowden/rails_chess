@@ -69,14 +69,14 @@ module Castle
     def queen_side_spaces_occupied?()
       CASTLE_QUEENSIDE_FILE_CONTAINER.map { |file|
         occupied_space?( file )
-      }.all? { |boolean| boolean }
+      }.any? { |boolean| boolean }
     end
     
     def occupied_space?( file )
       rank = :white == players_info.current_team ? Castle::WHITE_ROOK_RANK : Castle::BLACK_ROOK_RANK
       piece = board.
         find_piece_on_board( Position.new( file, rank ) )
-      piece.determine_possible_moves
+      piece.team
     end
     
     def legal_to_castle?( king_movement_counter, rook_movement_counter )

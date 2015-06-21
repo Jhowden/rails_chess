@@ -11,6 +11,7 @@ module CheckmateMoves
       board = Board.new( BoardJsonParser.parse_json_board( json_board ) )
       threatening_pieces_moves = find_threatening_pieces_moves( 
         enemy_team, current_team, board )
+      return [[true]] if threatening_pieces_moves.empty?
       team_pieces = CheckmateMoves.find_team_pieces( current_team, board ).
         reject { |piece| piece.class == GamePieces::King }
       team_pieces.map { |piece|

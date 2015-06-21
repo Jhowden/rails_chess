@@ -11,7 +11,8 @@ module CheckmateMoves
       board = Board.new( BoardJsonParser.parse_json_board( json_board ) )
       threatening_pieces_position = find_threatening_pieces( 
         enemy_team, current_team, board )
-      return [] if threatening_pieces_position.size >= 2 || threatening_pieces_position.empty?
+      return [[true]] if threatening_pieces_position.empty?
+      return [] if threatening_pieces_position.size >= 2
       team_pieces( current_team, board ).map { |piece|
         possible_moves = TransformPieceMoves.
           transform_moves( piece.determine_possible_moves )

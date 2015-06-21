@@ -62,7 +62,22 @@ describe GameStart::Checkmate do
             "b8a8",
             "b8b7",
             "d7b7",
-            "g5b7",
+            "g5b7"
+          ]
+        )
+      end
+    end
+    
+    context "when there are no threatening pieces that can be blocked" do
+      it "returns the list of possible moves and true" do
+        allow( CheckmateMoves::BlockPieceMoves ).to receive( :find_moves ).and_return [[true]]
+      
+        expect( checkmate.find_checkmate_escape_moves ).to eq(
+          [
+            "b8a8",
+            "b8b7",
+            "d7b7",
+            "true"
           ]
         )
       end

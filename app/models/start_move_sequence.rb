@@ -31,23 +31,6 @@ class StartMoveSequence
         else
           MoveSequence::NullSequence.new
         end
-      
-      if move_seq.valid_move?
-        board, response_message = move_seq.response
-        json_board = BoardJsonifier.jsonify_board( board.chess_board )
-        
-        if checkmate.match_finished?
-          game.update_attributes( board: json_board, 
-            winner: players_info.current_team )
-        else
-          game.update_attributes( board: json_board, 
-            player_turn: players_info.enemy_team_id )
-          observer.on_successful_move( response_message )  
-        end
-        game.user_inputs.create!( input.chess_notation )
-      else
-        observer.on_failed_move( INVALID_MOVE_MSG )
-      end
     else
       move_seq = case input
         when ParsedInput::Standard
@@ -59,21 +42,23 @@ class StartMoveSequence
         when ParsedInput::Castle
           MoveSequence::CastleSequence.new( input, players_info )
         end
-        
-      if move_seq.valid_move?
-        board, response_message = move_seq.response
-        json_board = BoardJsonifier.jsonify_board( board.chess_board )
-        
-        if checkmate.match_finished?
-          game.update_attributes( board: json_board,
-            winner: players_info.current_team )
-        else
-          game.update_attributes( board: json_board, 
-            player_turn: players_info.enemy_team_id )
-          observer.on_successful_move( response_message )
-        end
-        game.user_inputs.create!( input.chess_notation )
+    end
+    
+    if move_seq.valid_move?
+      board, response_message = move_seq.response
+      json_board = BoardJsonifier.jsonify_board( board.chess_board )
+      
+      if checkmate.match_finished? json_board
+        game.update_attributes( board: json_board,
+          winner: players_info.current_team_id )
+      else
+        game.update_attributes( { board: json_board, 
+          player_turn: players_info.enemy_team_id } )
+        observer.on_successful_move( response_message )
       end
+      game.user_inputs.create!( inputs: input.chess_notation )
+    else
+      observer.on_failed_move( INVALID_MOVE_MSG )
     end
   end
   
@@ -111,6 +96,8 @@ class StartMoveSequence
   end
   
   def board()
-    BoardJsonParser.parse_json_board( players_info.json_board )
+    Board.new( 
+      BoardJsonParser.
+        parse_json_board( players_info.json_board ) )
   end
 end

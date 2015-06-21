@@ -96,9 +96,9 @@ describe CheckmateMoves::CapturePieceMoves do
         end
       end
       
-      it "returns the possible moves" do
+      it "returns true" do
         expect( described_class.
-          find_moves( JSON.generate( json_board ), :black, :white ) ).to eq []
+          find_moves( JSON.generate( json_board ), :black, :white ) ).to eq [[true]]
       end
     end
     

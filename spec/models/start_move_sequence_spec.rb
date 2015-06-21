@@ -12,7 +12,7 @@ describe StartMoveSequence do
   end
   let( :players_info ) { double( "players_info", 
     current_team: :white,
-    cuurent_team_id: 5,
+    current_team_id: 5,
     enemy_team: :black,
     enemy_team_id: 2,
     json_board: "[]" ) }
@@ -180,7 +180,7 @@ describe StartMoveSequence do
           start_move_sequence.start
           
           expect( user_input ).to have_received( :create! ).
-            with( "a4g6" )
+            with( inputs: "a4g6" )
         end
         
         context "when there is a winner" do
@@ -188,7 +188,7 @@ describe StartMoveSequence do
             start_move_sequence.start
             
             expect( game ).to have_received( :update_attributes ).
-              with( board: "[]", winner: :white )
+              with( board: "[]", winner: 5 )
           end
         end
         
@@ -308,7 +308,7 @@ describe StartMoveSequence do
           subject.start
           
           expect( user_input ).to have_received( :create! ).
-            with( "a4g6" )
+            with( inputs: "a4g6" )
         end
         
         context "when there is a winner" do
@@ -316,7 +316,7 @@ describe StartMoveSequence do
             subject.start
             
             expect( game ).to have_received( :update_attributes ).
-              with( board: "[]", winner: :white )
+              with( board: "[]", winner: 5 )
           end
         end
         
@@ -338,6 +338,19 @@ describe StartMoveSequence do
           
             expect( observer ).to have_received( :on_successful_move ).
               with( "Sucessful move: a4b6" )
+          end
+        end
+        
+        context "when it is not a valid move" do
+          before :each do
+            allow( check_sequence ).to receive( :valid_move? ).and_return false
+          end
+        
+          it "calls off to the observer" do
+            start_move_sequence.start
+          
+            expect( observer ).to have_received( :on_failed_move ).
+              with( "Invalid move. Please select another move." )
           end
         end
       end

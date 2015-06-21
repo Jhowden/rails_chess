@@ -76,8 +76,7 @@ describe GameStart::Checkmate do
           [
             "b8a8",
             "b8b7",
-            "d7b7",
-            "true"
+            "d7b7"
           ]
         )
       end

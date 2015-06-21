@@ -15,7 +15,8 @@ module GameStart
     def find_checkmate_escape_moves()
       moves = find_possible_escape_moves( 
         json_board, current_team, enemy_team ) 
-      moves.uniq.map{ |move| move.map( &:to_s ).join }
+      moves.uniq.reject { |move| move == [true] }.
+        map{ |move| move.map( &:to_s ).join }
     end
     
     def match_finished?( updated_json_board )
